@@ -3,13 +3,31 @@
   "version": "0.0.1",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "init": "npm install",
+    "init:bun": "bun install",
+    "clean": "rm -rf dist && rm -rf node_modules && rm -f ./bun.lock ./package-lock.json",
+    "clean-install:bun": "bun run clean && bun install",
+    "clean-install": "npm run clean && npm install",
+    "build:bun": "bun run tsc",
+    "build": "tsc",
+    "start:bun": "bun run ./index.ts",
+    "start": "tsx ./index.ts"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.2"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "mongoose": "^8.10.1"
   }
 }
