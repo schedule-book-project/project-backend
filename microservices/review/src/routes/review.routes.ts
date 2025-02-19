@@ -1,21 +1,58 @@
 import express from "express";
-import { createReview, deleteReview, getReviewById, getReviewsByBusiness, updateReview } from "../controllers/reviewController";
+import Review from "../models/Review.model";
 
 const router = express.Router();
 
-// Create a review
-router.post("/", createReview);
+// 🔹 Δημιουργία νέας κριτικής
+router.post("/", async (req, res) => {
+  try {
+    const review = new Review(req.body);
+    await review.save();
+    res.status(201).json(review);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
-// Get all the reviews for a business
-router.get("/business/:businessId", getReviewsByBusiness);
+// 🔹 Λήψη όλων των κριτικών μιας επιχείρησης
+router.get("/business/:businessId", async (req, res) => {
+  try {
+    const reviews = await Review.find({ business: req.params.businessId }).populate("customer business");
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-// Get review by ID
-router.get("/:id", getReviewById);
+// 🔹 Λήψη μιας συγκεκριμένης κριτικής
+router.get("/:id", async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id).populate("customer business");
+    if (!review) return res.status(404).json({ message: "Review not found" });
+    res.json(review);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-// Update a review
-router.put("/:id", updateReview);
+// 🔹 Ενημέρωση κριτικής
+router.put("/:id", async (req, res) => {
+  try {
+    const review = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(review);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
-// Delete review
-router.delete("/:id", deleteReview);
+// 🔹 Διαγραφή κριτικής (π.χ. από τον χρήστη που την έγραψε ή από admin)
+router.delete("/:id", async (req, res) => {
+  try {
+    await Review.findByIdAndDelete(req.params.id);
+    res.json({ message: "Review deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 export default router;
