@@ -1,5 +1,5 @@
 import express from "express";
-import Admin from "../models/Admin";
+import Admin from "../../microservices/admin/src/models/Admin.model";
 
 const router = express.Router();
 
