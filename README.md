@@ -38,3 +38,32 @@ npm run start
 # or 
 npm run start:bun
 ```
+
+If MongoDB is not running, start it with:
+
+```bash
+sudo systemctl start mongod  # Linux
+brew services start mongodb-community  # macOS
+```
+
+Run this command to see which process is using port 5000:
+
+On macOS/Linux:
+```bash
+lsof -i :5000
+```
+Then, kill the process using:
+```bash
+kill -9 <PID>
+```
+Replace <PID> with the process ID from the lsof output.
+
+On Windows:
+```bash
+netstat -ano | findstr :5000
+```
+
+Then, kill the process with:
+```bash
+taskkill /PID <PID> /F
+```
