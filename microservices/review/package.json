@@ -1,0 +1,13 @@
+{
+    "name": "review-service",
+    "version": "0.0.1",
+    "main": "src/server.ts",
+    "scripts": {
+      "start:bun": "bun run src/server.ts",
+      "start": "tsx src/server.ts"
+    },
+    "dependencies": {
+      "express": "latest",
+      "mongoose": "latest"
+    }
+  }
