@@ -1,6 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 
-// 1️⃣ TypeScript Interface για Type Safety
+// 1️⃣ TypeScript Interface for Type Safety
 export interface IBusiness extends Document {
   name: string;
   email: string;
@@ -47,7 +47,7 @@ const BusinessSchema = new Schema<IBusiness>(
   { timestamps: true }
 );
 
-// 3️⃣ Δημιουργία Model
+// 3️⃣ Model Creation
 const Business = model<IBusiness>("Business", BusinessSchema);
 
 export default Business;
