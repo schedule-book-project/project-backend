@@ -1,6 +1,4 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 import User from "../models/User.model";
 
@@ -13,13 +11,24 @@ const handleValisationErrors = (req: express.Request) => {
     }
 }
 
+// Create a user
+export const createUser = async (req: express.Request, res: express.Response) => {
+    try {
+      const user = new User(req.body);
+      await user.save();
+      res.status(201).json(user);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
 // Get all the users
 export const getUsers = async (req: express.Request, res: express.Response) => {
     try {
         const users = await User.find();
         res.json(users);
     } catch (error: any) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({error: error.message});
     }
 }
 
@@ -28,12 +37,12 @@ export const getUserByID = async (req: express.Request, res: express.Response) =
     try {
         const user = User.findById(req.params.id);
         if (!user) {
-            res.status(404).json({message: "User not found"});
+            res.status(404).json({error: "User not found"});
             return;
         }
         res.json(user);
     } catch (error: any) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({error: error.message});
     }
 }
 
@@ -45,7 +54,7 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
         });
         res.json(user);
       } catch (error: any) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
       }
 }
 
@@ -55,6 +64,6 @@ export const deleteUser = async (req: express.Request, res: express.Response) =>
         await User.findByIdAndDelete(req.params.id);
         res.json({ message: "User deleted" });
       } catch (error: any) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ error: error.message });
       }
 }

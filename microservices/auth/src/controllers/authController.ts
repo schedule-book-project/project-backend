@@ -34,7 +34,7 @@ export const register = async (req: express.Request, res: express.Response) => {
 
         res.status(201).json({message: "User registered successfully"});
     } catch (error) {
-        res.status(500).json({message: "Server error"});
+        res.status(500).json({error: "Server error"});
     }
 };
 
@@ -57,6 +57,6 @@ export const login = async (req: express.Request, res: express.Response) => {
         const token = generateToken(user);
         res.json({token, user: {id: user.id, email: user.email, role: user.role}});
     } catch (error) {
-        res.status(500).json({message: "Server error"});
+        res.status(500).json({error: "Server error"});
     }
 }

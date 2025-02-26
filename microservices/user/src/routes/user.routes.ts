@@ -1,8 +1,11 @@
 import express from "express";
-import { deleteUser, getUserByID, getUsers, updateUser } from "../controllers/userController";
+import { createUser, deleteUser, getUserByID, getUsers, updateUser } from "../controllers/userController";
 import { check } from "express-validator";
 
 const router = express.Router();
+
+// Create a user
+router.post("/", createUser);
 
 // Get all users
 router.get("/", getUsers);

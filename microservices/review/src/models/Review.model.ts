@@ -1,6 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 
-// 1️⃣ TypeScript Interface για Type Safety
+// 1️⃣ TypeScript Interface for Type Safety
 export interface IReview extends Document {
   customer: Schema.Types.ObjectId; // Αναφορά στον χρήστη που κάνει την κριτική
   business: Schema.Types.ObjectId; // Αναφορά στην επιχείρηση που αξιολογείται
@@ -21,7 +21,7 @@ const ReviewSchema = new Schema<IReview>(
   { timestamps: true }
 );
 
-// 3️⃣ Δημιουργία Model
+// 3️⃣ Model Creation
 const Review = model<IReview>("Review", ReviewSchema);
 
 export default Review;
