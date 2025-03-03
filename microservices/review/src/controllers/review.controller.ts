@@ -1,5 +1,5 @@
 import express from "express";
-import Review from "../models/Review.model";
+import Review from "../models/review.model.ts";
 
 // Create a review
 export const createReview = async (req: express.Request, res: express.Response) => {

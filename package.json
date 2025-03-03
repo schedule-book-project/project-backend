@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "module": "index.ts",
   "type": "module",
-  "workspaces": ["microservices/*"],
+  "private": "true",
+  "workspaces": [
+    "microservices/*"
+  ],
   "scripts": {
     "init": "npm install",
     "init:bun": "bun install",
@@ -12,15 +15,29 @@
     "clean-install": "npm run clean && npm install",
     "build:bun": "bun run tsc",
     "build": "tsc",
-    "start:bun": "bun run ./index.ts",
-    "start": "tsx ./index.ts"
+    "start:bun": "run-p start:*:bun",
+    "start:authService:bun": "bun run ./services/auth/src/server.ts",
+    "start:adminService:bun": "bun run ./services/admin/src/server.ts",
+    "start:bookingService:bun": "bun run ./services/booking/src/server.ts",
+    "start:businessService:bun": "bun run ./services/business/src/server.ts",
+    "start:reviewService:bun": "bun run ./services/review/src/server.ts",
+    "start:userService:bun": "bun run ./services/user/src/server.ts",
+    "start": "run-p start:*",
+    "start:authService": "tsx ./services/auth/src/server.ts",
+    "start:adminService": "tsx ./services/admin/src/server.ts",
+    "start:bookingService": "tsx ./services/booking/src/server.ts",
+    "start:businessService": "tsx ./services/business/src/server.ts",
+    "start:reviewService": "tsx ./services/review/src/server.ts",
+    "start:userService": "tsx ./services/user/src/server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.13.4",
     "nodemon": "^3.1.9",
+    "npm-run-all": "^4.1.5",
     "tsx": "^4.19.2"
   },
   "peerDependencies": {
@@ -29,12 +46,13 @@
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.9",
     "bcryptjs": "^3.0.2",
-    "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
+    "http-proxy-middleware": "^3.0.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.10.1"
+    "mongoose": "^8.10.1",
+    "morgan": "^1.10.0"
   }
 }
