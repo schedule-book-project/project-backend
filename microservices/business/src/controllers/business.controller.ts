@@ -1,5 +1,5 @@
 import express from "express";
-import Business from "../models/Business.model";
+import Business from "../models/business.model.ts";
 
 // Create a business
 export const createBusiness = async (req: express.Request, res: express.Response) => {

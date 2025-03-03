@@ -1,6 +1,6 @@
 import express from "express";
 import { validationResult } from "express-validator";
-import User from "../models/User.model";
+import User from "../models/user.model.ts";
 
 
 const handleValisationErrors = (req: express.Request) => {

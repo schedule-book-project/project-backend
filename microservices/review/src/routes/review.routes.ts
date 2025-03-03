@@ -1,21 +1,43 @@
 import express from "express";
-import { createReview, deleteReview, getReviewById, getReviewsByBusiness, updateReview } from "../controllers/reviewController";
+import { createReview, getAllReviews, getReviewsByBusiness, deleteReview } from "../services/review.service";
+import {authenticate} from "../../../../shared/middlewares/auth.middleware.ts";
 
 const router = express.Router();
 
-// Create a review
-router.post("/", createReview);
+router.post("/", authenticate, async (req, res) => {
+    try {
+        const review = await createReview({ ...req.body, reviewer: (req as any).user.userId });
+        res.status(201).json({ success: true, review });
+    } catch (error:any) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-// Get all the reviews for a business
-router.get("/business/:businessId", getReviewsByBusiness);
+router.get("/", async (req, res) => {
+    try {
+        const reviews = await getAllReviews();
+        res.status(200).json({ success: true, reviews });
+    } catch (error:any) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-// Get review by ID
-router.get("/:id", getReviewById);
+router.get("/:businessId", async (req, res) => {
+    try {
+        const reviews = await getReviewsByBusiness(req.params.businessId);
+        res.status(200).json({ success: true, reviews });
+    } catch (error:any) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-// Update a review
-router.put("/:id", updateReview);
-
-// Delete review
-router.delete("/:id", deleteReview);
+router.delete("/:id", authenticate, async (req, res) => {
+    try {
+        await deleteReview(req.params.id);
+        res.status(200).json({ success: true, message: "Review deleted" });
+    } catch (error:any) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 export default router;
