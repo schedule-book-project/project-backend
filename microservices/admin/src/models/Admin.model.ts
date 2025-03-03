@@ -1,11 +1,11 @@
 import { Schema, model, Document } from "mongoose";
 
-// 1️⃣ TypeScript Interface για Type Safety
+// 1️⃣ TypeScript Interface for Type Safety
 export interface IAdmin extends Document {
   name: string;
   email: string;
   password: string;
-  role: "superadmin" | "moderator"; // Διαφορετικοί τύποι διαχειριστών
+  role: "superadmin" | "moderator";
   createdAt: Date;
 }
 
@@ -25,7 +25,7 @@ const AdminSchema = new Schema<IAdmin>(
   { timestamps: true }
 );
 
-// 3️⃣ Δημιουργία Model
+// 3️⃣ Model Creation
 const Admin = model<IAdmin>("Admin", AdminSchema);
 
 export default Admin;
