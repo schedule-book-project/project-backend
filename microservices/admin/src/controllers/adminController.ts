@@ -1,5 +1,5 @@
 import express from "express";
-import Admin from "../models/Admin.model";
+import * as adminService from "../services/admin.service";
 
 // Create Admin
 export const createAdmin = async (
@@ -7,11 +7,25 @@ export const createAdmin = async (
   res: express.Response
 ) => {
   try {
-    const admin = new Admin(req.body);
-    await admin.save();
+    const { email, password, role } = req.body;
+    const admin = await adminService.createAdmin(email, password, role);
     res.status(201).json(admin);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+// Authenticate Admin
+export const authenticateAdmin = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { email, password } = req.body;
+    const { token, admin } = await adminService.authenticateAdmin(email, password);
+    res.status(200).json({ success: true, token, admin });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -21,7 +35,7 @@ export const getAdmins = async (
   res: express.Response
 ) => {
   try {
-    const admins = await Admin.find();
+    const admins = await adminService.getAllAdmins();
     res.json(admins);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -34,9 +48,9 @@ export const getAdminById = async (
   res: express.Response
 ) => {
   try {
-    const admin = await Admin.findById(req.params.id);
+    const admin = await adminService. getAdminById(req.params.id);
     if (!admin) {
-        res.status(404).json({ message: "Admin not found" });
+        res.status(404).json({ error: "Admin not found" });
         return;
     }
     res.json(admin);
@@ -46,10 +60,10 @@ export const getAdminById = async (
 };
 
 // Delete admin (only Super Admins can delete other admins)
-export const deletdAdmin = async(req: express.Request, res: express.Response) => {
+export const deleteAdmin = async(req: express.Request, res: express.Response) => {
     try {
-        await Admin.findByIdAndDelete(req.params.id);
-        res.json({ message: "Admin deleted" });
+        await adminService.deleteAdmin(req.params.id);
+        res.json({ error: "Admin deleted" });
       } catch (error: any) {
         res.status(500).json({ error: error.message });
       }

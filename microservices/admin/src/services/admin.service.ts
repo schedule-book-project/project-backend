@@ -1,5 +1,5 @@
 import Admin from "../models/admin.model";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const createAdmin = async (email: string, password: string, role: string) => {
@@ -22,6 +22,10 @@ export const authenticateAdmin = async (email: string, password: string) => {
 
 export const getAllAdmins = async () => {
     return Admin.find();
+};
+
+export const getAdminById = async (id: string) => {
+    return Admin.findById(id);
 };
 
 export const deleteAdmin = async (id: string) => {
