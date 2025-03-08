@@ -1,10 +1,9 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./config/db";
 import reviewRoutes from "./routes/review.routes";
+import dbConnection from "@shared/database/db.ts";
+import {config} from "@shared/config/environment.handler.ts";
 
-dotenv.config();
 const app = express();
 
 app.use(cors());
@@ -13,7 +12,7 @@ app.use(express.json());
 // Routes
 app.use("/api/reviews", reviewRoutes);
 
-const PORT = process.env.PORT || 5004;
-connectDB().then(() => {
+const PORT = config.REVIEW_PORT || 5006;
+dbConnection(config.REVIEW_MONGO_DB_URI, "Review").then(() => {
     app.listen(PORT, () => console.log(`🚀 Review Service running on port ${PORT}`));
 });

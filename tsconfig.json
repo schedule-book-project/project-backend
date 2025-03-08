@@ -23,6 +23,18 @@
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
+    "noPropertyAccessFromIndexSignature": false,
+    "paths": {
+      "@gateway/*": ["./microservices/api-gateway/*"],
+      "@auth/*": ["./microservices/auth/*"],
+      "@admin/*": ["./microservices/admin/*"],
+      "@user/*": ["./microservices/user/*"],
+      "@business/*": ["./microservices/business/*"],
+      "@booking/*": ["./microservices/booking/*"],
+      "@review/*": ["./microservices/review/*"],
+      "@microservices/*": ["./microservices/*"],
+      "@shared/*": ["./shared/*"],
+      "@resources/*": ["./resources/*"]
+    }
   }
 }

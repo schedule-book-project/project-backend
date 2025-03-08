@@ -1,1 +1,3 @@
-import "./shared/server";
+import {setEnvironment} from "@shared/config/environment.handler.ts";
+
+setEnvironment();

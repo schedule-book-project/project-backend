@@ -1,6 +1,6 @@
 import express from "express";
-import { createUser, deleteUser, getUserByID, getUsers, updateUser } from "../controllers/user.controller.ts";
-import { check } from "express-validator";
+import {createUser, deleteUser, getUserByID, getUsers, updateUser} from "../controllers/user.controller.ts";
+import {check} from "express-validator";
 
 const router = express.Router();
 

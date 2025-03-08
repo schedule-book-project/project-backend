@@ -31,7 +31,7 @@ router.get("/:id", async (req, res) => {
     try {
         const business = await getBusinessById(req.params.id);
         res.status(200).json({success: true, business});
-    } catch (error) {
+    } catch (error:any) {
         res.status(400).json({error: error.message});
     }
 });

@@ -1,5 +1,5 @@
 import express from "express";
-import * as adminController from "../controllers/adminController.ts";
+import * as adminController from "../controllers/admin.controller.ts";
 import {authenticate, isSuperAdmin} from "../../../../shared/middlewares/auth.middleware.ts";
 
 const router = express.Router();

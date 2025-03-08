@@ -1,5 +1,5 @@
 import express from "express";
-import { validationResult } from "express-validator";
+import {validationResult} from "express-validator";
 import User from "../models/user.model.ts";
 
 

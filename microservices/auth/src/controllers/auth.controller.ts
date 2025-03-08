@@ -1,7 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { validationResult } from "express-validator";
+import {validationResult} from "express-validator";
 import User from "../../../user/src/models/user.model";
 
 const generateToken = (user: any) => {

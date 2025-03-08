@@ -1,5 +1,5 @@
 import express from "express";
-import { createReview, getAllReviews, getReviewsByBusiness, deleteReview } from "../services/review.service";
+import {createReview, deleteReview, getAllReviews, getReviewsByBusiness} from "../services/review.service";
 import {authenticate} from "../../../../shared/middlewares/auth.middleware.ts";
 
 const router = express.Router();

@@ -1,19 +1,18 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./config/db";
 import userRoutes from "./routes/user.routes.ts";
+import dbConnection from "@shared/database/db.ts";
+import {config} from "@shared/config/environment.handler.ts";
 
-dotenv.config();
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/reviews", userRoutes);
+app.use("/api/users", userRoutes);
 
-const PORT = process.env.PORT || 5004;
-connectDB().then(() => {
-    app.listen(PORT, () => console.log(`🚀 Review Service running on port ${PORT}`));
+const PORT = config.USER_PORT || 5003;
+dbConnection(config.USER_MONGO_DB_URI, "User").then(() => {
+    app.listen(PORT, () => console.log(`🚀 User Service running on port ${PORT}`));
 });

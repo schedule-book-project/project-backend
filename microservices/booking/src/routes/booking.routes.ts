@@ -1,5 +1,5 @@
 import express from "express";
-import * as bookingController from "../controllers/bookingController.ts";
+import * as bookingController from "../controllers/booking.controller.ts";
 import {authenticate} from "../../../../shared/middlewares/auth.middleware.ts";
 
 

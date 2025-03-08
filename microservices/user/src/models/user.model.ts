@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from "mongoose";
+import {Document, model, Schema} from "mongoose";
 import bcrypt from "bcryptjs";
 
 // 1. TypeScript Interface για Type Safety

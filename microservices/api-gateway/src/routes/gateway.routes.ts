@@ -1,6 +1,6 @@
 import express from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
-import { services } from "../config/services.config";
+import {createProxyMiddleware} from "http-proxy-middleware";
+import {services} from "../config/services.config";
 import {authenticate} from "../../../../shared/middlewares/auth.middleware.ts";
 
 const router = express.Router();

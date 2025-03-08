@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import {Document, model, Schema} from "mongoose";
 
 // 1️⃣ TypeScript Interface for Type Safety
 export interface IBooking extends Document {
