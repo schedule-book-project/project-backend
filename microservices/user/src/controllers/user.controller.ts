@@ -1,9 +1,12 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
 import User from "../models/user.model.ts";
+import sendEmail from "../../../../src/config/emailConfig.ts";
 
 
-const handleValisationErrors = (req: express.Request) => {
+
+const handleValidationErrors = (req: express.Request) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorMessages = errors.array().map((err) => err.msg);
@@ -11,16 +14,30 @@ const handleValisationErrors = (req: express.Request) => {
     }
 }
 
-// Create a user
-export const createUser = async (req: express.Request, res: express.Response) => {
-    try {
-      const user = new User(req.body);
+// Register a user
+export const registerUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+      handleValidationErrors(req);
+
+      const { name, email, password } = req.body;
+
+      let user = await User.findOne({ email });
+      if (user) await res.status(400).json({ error: "Ο χρήστης υπάρχει ήδη" });
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      user = new User({ name, email, password: hashedPassword });
       await user.save();
-      res.status(201).json(user);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
+
+      // ✅ Χρησιμοποιούμε `await` στο sendEmail για να περιμένουμε την ολοκλήρωση
+      await sendEmail(email, "Successful Registration", `Welcome, ${name}!`);
+
+      await res.status(201).json({ msg: "User created successfully, email sent", user });
+  } catch (error: any) {
+      await res.status(400).json({ error: error.message });
   }
+};
 
 // Get all the users
 export const getUsers = async (req: express.Request, res: express.Response) => {
