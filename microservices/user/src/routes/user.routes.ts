@@ -1,17 +1,17 @@
 import express from "express";
-import {createUser, deleteUser, getUserByID, getUsers, updateUser} from "../controllers/user.controller.ts";
+import * as userController from "../controllers/user.controller.ts";
 import {check} from "express-validator";
 
 const router = express.Router();
 
 // Create a user
-router.post("/", createUser);
+router.post("/", userController.createUser);
 
 // Get all users
-router.get("/", getUsers);
+router.get("/", userController.getUsers);
 
 // Get user by ID
-router.get("/:id", getUserByID);
+router.get("/:id", userController.getUserById);
 
 // Update user
 router.put("/:id", 
@@ -23,10 +23,10 @@ router.put("/:id",
   check("password", "Password must contain at least one number").matches(/\d/),
   check("password", "Password must contain at least one special character").matches(/[\W_]/)
 ], 
-updateUser
+userController.updateUser
 );
 
 // Delete user
-router.delete("/:id", deleteUser);
+router.delete("/:id", userController.deleteUser);
 
 export default router;

@@ -17,7 +17,7 @@ export interface IBusiness extends Document {
     close: string;
   }[];
   rating: number;
-  reviews: string[]; // IDs από τις κριτικές
+  reviews: string[];
   createdAt: Date;
 }
 
@@ -32,12 +32,12 @@ const BusinessSchema = new Schema<IBusiness>(
       longitude: { type: Number, required: true },
       address: { type: String, required: true },
     },
-    services: [{ type: String, required: true }], // Π.χ. ["Κούρεμα", "Μασάζ"]
+    services: [{ type: String, required: true }],
     availability: [
       {
-        day: { type: String, required: true }, // Π.χ. "Monday"
-        open: { type: String, required: true }, // Π.χ. "09:00"
-        close: { type: String, required: true }, // Π.χ. "18:00"
+        day: { type: String, required: true },
+        open: { type: String, required: true },
+        close: { type: String, required: true },
       },
     ],
     rating: { type: Number, default: 0 },
