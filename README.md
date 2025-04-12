@@ -67,3 +67,10 @@ Then, kill the process with:
 ```bash
 taskkill /PID <PID> /F
 ```
+
+# HERE Maps API
+In order to use the HERE Maps you have to follow the following steps:
+- https://platform.here.com/access/apps
+- Click on **Create new app** button
+- Add an app name (e.g BookIT 4U)
+- Store the create api key to the env variable **HERE_API_KEY**
