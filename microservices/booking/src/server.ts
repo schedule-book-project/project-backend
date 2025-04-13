@@ -3,6 +3,8 @@ import cors from "cors";
 import bookingRoutes from "./routes/booking.routes";
 import dbConnection from "@shared/database/db.ts";
 import {config} from "@shared/config/environment.handler.ts";
+import { setupSwagger } from '@shared/swagger/config';
+
 
 const app = express();
 
@@ -11,6 +13,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/bookings", bookingRoutes);
+
+setupSwagger(app, 'User Service');
 
 const PORT = config.BOOKING_PORT || 5004;
 dbConnection(config.BOOKING_MONGO_DB_URI, "Booking")
