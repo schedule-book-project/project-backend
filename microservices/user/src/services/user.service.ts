@@ -1,22 +1,39 @@
 import User, { type IUser } from "../models/user.model";
 import { Types } from "mongoose";
 import bcrypt from "bcryptjs";
+import { generateToken } from "@shared/middlewares/jwt";
 
 // Create a User
-export const createUser = async (data: Partial<IUser>) => {
-  const existingUser = await User.findOne({ email: data.email });
-  if (existingUser) {
-    throw new Error("Email is already in use.");
-  }
+export const registerUser = async (name: string, email: string, password: string, role: string) => {
+  const existingUser = await User.findOne({email});
+  if (existingUser) throw new Error("User already exists");
 
-  const user = new User(data);
-  await user.save();
-  return user;
+  const newUser = new User({name, email: email.toLowerCase(), password, role});
+  await newUser.save();
+
+  return newUser;
+};
+
+// Login
+export const loginUser = async (email: string, password: string) => {
+  console.log(email)
+  const user = await User.findOne({email: email.toLowerCase()});
+  console.log(user)
+  if (!user) throw new Error("Invalid credentials");
+
+  console.log(`${password} - ${user.password}`)
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) throw new Error("Invalid credentials");
+
+  const token = generateToken(user);
+  return { token, user: { id: user._id, email: user.email, role: user.role } };
 };
 
 // Get All Users
 export const getAllUsers = async () => {
-  return User.find().select("-password").lean();
+  const users = User.find().select("-password").lean();
+  console.log("Found users:", users);
+  return users
 };
 
 // Get User by ID

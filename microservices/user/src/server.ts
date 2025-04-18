@@ -10,9 +10,15 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 
-const PORT = config.USER_PORT || 5003;
-dbConnection(config.USER_MONGO_DB_URI, "User").then(() => {
+const PORT = config.USER_PORT || 5002;
+dbConnection(config.USER_MONGO_DB_URI, "User")
+  .then(() => {
+    console.log(`MongoDB connected to ${config.USER_MONGO_DB_URI}`);
     app.listen(PORT, () => console.log(`🚀 User Service running on port ${PORT}`));
-});
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit if connection fails
+  });

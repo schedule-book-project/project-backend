@@ -12,7 +12,13 @@ app.use(express.json());
 // Routes
 app.use("/api/bookings", bookingRoutes);
 
-const PORT = config.BOOKING_PORT || 5005;
-dbConnection(config.BOOKING_MONGO_DB_URI, "Booking").then(() => {
+const PORT = config.BOOKING_PORT || 5004;
+dbConnection(config.BOOKING_MONGO_DB_URI, "Booking")
+  .then(() => {
+    console.log(`MongoDB connected to ${config.BOOKING_MONGO_DB_URI}`);
     app.listen(PORT, () => console.log(`🚀 Booking Service running on port ${PORT}`));
-});
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit if connection fails
+  });

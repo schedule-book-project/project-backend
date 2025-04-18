@@ -11,11 +11,29 @@ const handleValidationErrors = (req: express.Request) => {
 };
 
 // Create User
-export const createUser = async (req: express.Request, res: express.Response) => {
+export const register = async (req: express.Request, res: express.Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400).json({ errors: errors.array() });
+        return;
+    }
+
     try {
-        handleValidationErrors(req);
-        const user = await userService.createUser(req.body);
-        res.status(201).json({ success: true, user });
+        const { name, email, password, role } = req.body;
+        const user = await userService.registerUser(name, email, password, role);
+        res.status(201).json({ message: "User registered successfully", user });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Login
+export const login = async (req: express.Request, res: express.Response) => {
+    try {
+        const { email, password } = req.body;
+        console.log(`Email:${req.body.email}password:${req.body.password}`)
+        const { token, user } = await userService.loginUser(email, password);
+        res.json({ token, user });
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }

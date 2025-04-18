@@ -12,7 +12,13 @@ app.use(express.json());
 // Routes
 app.use("/api/places", locationsRoutes);
 
-const PORT = config.PLACES_PORT || 5007;
-dbConnection(config.PLACES_MONGO_DB_URI, "Places").then(() => {
+const PORT = config.PLACES_PORT || 5006;
+dbConnection(config.PLACES_MONGO_DB_URI, "Places")
+  .then(() => {
+    console.log(`MongoDB connected to ${config.PLACES_MONGO_DB_URI}`);
     app.listen(PORT, () => console.log(`🚀 Places Service running on port ${PORT}`));
-});
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit if connection fails
+  });
