@@ -7,11 +7,11 @@ export const createBusiness = async (data: any) => {
 };
 
 export const getAllBusinesses = async () => {
-    return Business.find();
+    return Business.find().lean();
 };
 
 export const getBusinessById = async (id: string) => {
-    return Business.findById(id);
+    return Business.findById(id).lean();
 };
 
 export const updateBusiness = async (id: string, updates: any) => {

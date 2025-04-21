@@ -12,7 +12,13 @@ app.use(express.json());
 // Routes
 app.use("/api/admin", adminRoutes);
 
-const PORT = config.ADMIN_PORT || 5002;
-dbConnection(config.ADMIN_MONGO_DB_URI, "Admin").then(() => {
+const PORT = config.ADMIN_PORT || 5001;
+dbConnection(config.ADMIN_MONGO_DB_URI, "Admin")
+  .then(() => {
+    console.log(`MongoDB connected to ${config.ADMIN_MONGO_DB_URI}`);
     app.listen(PORT, () => console.log(`🚀 Admin Service running on port ${PORT}`));
-});
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit if connection fails
+  });

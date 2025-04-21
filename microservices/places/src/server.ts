@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import businessRoutes from "./routes/business.routes";
+import locationsRoutes from "./routes/locations.routes";
 import dbConnection from "@shared/database/db.ts";
 import {config} from "@shared/config/environment.handler.ts";
 
@@ -10,13 +10,13 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/business", businessRoutes);
+app.use("/api/places", locationsRoutes);
 
-const PORT = config.BUSINESS_PORT || 5003;
-dbConnection(config.BUSINESS_MONGO_DB_URI, "Business")
+const PORT = config.PLACES_PORT || 5006;
+dbConnection(config.PLACES_MONGO_DB_URI, "Places")
   .then(() => {
-    console.log(`MongoDB connected to ${config.BUSINESS_MONGO_DB_URI}`);
-    app.listen(PORT, () => console.log(`🚀 Business Service running on port ${PORT}`));
+    console.log(`MongoDB connected to ${config.PLACES_MONGO_DB_URI}`);
+    app.listen(PORT, () => console.log(`🚀 Places Service running on port ${PORT}`));
   })
   .catch((error) => {
     console.error("Failed to connect to MongoDB:", error);

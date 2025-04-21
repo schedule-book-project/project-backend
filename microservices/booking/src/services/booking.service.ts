@@ -1,23 +1,44 @@
-import Booking from "../models/booking.model";
+import Booking, { type IBooking } from "../models/booking.model";
+import { Types } from "mongoose";
 
-export const createBooking = async (data: any) => {
-    const booking = new Booking(data);
-    await booking.save();
-    return booking;
+// 1️⃣ Create a booking
+export const createBooking = async (data: Partial<IBooking>) => {
+  const booking = new Booking(data);
+  await booking.save();
+  return booking;
 };
 
+// 2️⃣ Get all bookings (Populates customer, business, and review)
 export const getAllBookings = async () => {
-    return Booking.find().populate("customer business");
+  return Booking.find()
+    .populate("customer", "name email") // Select only needed fields
+    .populate("business", "name location")
+    .populate("review")
+    .lean(); // Use lean() for better performance
 };
 
+// 3️⃣ Get booking by ID (Populated)
 export const getBookingById = async (id: string) => {
-    return Booking.findById(id).populate("customer business");
+  if (!Types.ObjectId.isValid(id)) return null;
+  return Booking.findById(id)
+    .populate("customer", "name email")
+    .populate("business", "name location")
+    .populate("review")
+    .lean();
 };
 
-export const updateBookingStatus = async (id: string, status: string) => {
-    return Booking.findByIdAndUpdate(id, {status}, {new: true});
+// 4️⃣ Update booking
+export const updateBooking = async (id: string, updates: Partial<IBooking>) => {
+  if (!Types.ObjectId.isValid(id)) return null;
+  return Booking.findByIdAndUpdate(id, updates, { new: true })
+    .populate("customer", "name email")
+    .populate("business", "name location")
+    .populate("review")
+    .lean();
 };
 
+// 5️⃣ Delete booking
 export const deleteBooking = async (id: string) => {
-    return Booking.findByIdAndDelete(id);
+  if (!Types.ObjectId.isValid(id)) return null;
+  return Booking.findByIdAndDelete(id);
 };

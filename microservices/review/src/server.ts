@@ -12,7 +12,13 @@ app.use(express.json());
 // Routes
 app.use("/api/reviews", reviewRoutes);
 
-const PORT = config.REVIEW_PORT || 5006;
-dbConnection(config.REVIEW_MONGO_DB_URI, "Review").then(() => {
+const PORT = config.REVIEW_PORT || 5005;
+dbConnection(config.REVIEW_MONGO_DB_URI, "Review")
+  .then(() => {
+    console.log(`MongoDB connected to ${config.REVIEW_MONGO_DB_URI}`);
     app.listen(PORT, () => console.log(`🚀 Review Service running on port ${PORT}`));
-});
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit if connection fails
+  });
