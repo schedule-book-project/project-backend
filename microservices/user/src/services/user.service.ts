@@ -1,15 +1,25 @@
-import User, { type IUser } from "../models/user.model";
-import { Types } from "mongoose";
-import bcrypt from "bcryptjs";
-import { generateToken } from "@shared/middlewares/jwt";
-import type { ApiErrorModel } from "@shared/models/error.model";
+import { generateToken } from '@shared/middlewares/jwt';
+import { ApiErrorModel } from '@shared/models/error.model';
+import bcrypt from 'bcryptjs';
+import { Types } from 'mongoose';
+import User, { type IUser } from '../models/user.model';
 
 // Create a User
-export const registerUser = async (name: string, email: string, password: string, role: string) => {
-  const existingUser = await User.findOne({email});
-  if (existingUser) throw new Error("User already exists");
+export const registerUser = async (
+  name: string,
+  email: string,
+  password: string,
+  role: string,
+) => {
+  const existingUser = await User.findOne({ email });
+  if (existingUser) throw new Error('User already exists');
 
-  const newUser = new User({name, email: email.toLowerCase(), password, role});
+  const newUser = new User({
+    name,
+    email: email.toLowerCase(),
+    password,
+    role,
+  });
   await newUser.save();
 
   return newUser;
@@ -17,14 +27,14 @@ export const registerUser = async (name: string, email: string, password: string
 
 // Login
 export const loginUser = async (email: string, password: string) => {
-  console.log(email)
-  const user = await User.findOne({email: email.toLowerCase()});
-  console.log(user)
-  if (!user) throw new Error("Invalid credentials");
+  console.log(email);
+  const user = await User.findOne({ email: email.toLowerCase() });
+  console.log(user);
+  if (!user) throw new Error('Invalid credentials');
 
-  console.log(`${password} - ${user.password}`)
+  console.log(`${password} - ${user.password}`);
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error("Invalid credentials");
+  if (!isMatch) throw new Error('Invalid credentials');
 
   const token = generateToken(user);
   return { token, user: { id: user._id, email: user.email, role: user.role } };
@@ -36,9 +46,9 @@ export const loginUser = async (email: string, password: string) => {
  * @returns A list of all users.
  */
 export const getAllUsers = async () => {
-  const users = User.find().select("-password").lean();
-  console.log("Found users:", users);
-  return users
+  const users = User.find().select('-password').lean();
+  console.log('Found users:', users);
+  return users;
 };
 
 /**
@@ -49,12 +59,12 @@ export const getAllUsers = async () => {
  */
 export const getUserById = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiErrorModel(400, "Invalid User ID");
+    throw new ApiErrorModel(400, 'Invalid User ID');
   }
 
-  const user = await User.findById(id).select("-password").lean();
+  const user = await User.findById(id).select('-password').lean();
   if (!user) {
-    throw new ApiErrorModel(404, "User not found");
+    throw new ApiErrorModel(404, 'User not found');
   }
 
   return user;
@@ -69,16 +79,18 @@ export const getUserById = async (id: string) => {
  */
 export const updateUser = async (id: string, updates: Partial<IUser>) => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiErrorModel(400, "Invalid User ID");
+    throw new ApiErrorModel(400, 'Invalid User ID');
   }
 
   if (updates.password) {
     updates.password = await bcrypt.hash(updates.password, 10);
   }
 
-  const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true }).select("-password").lean();
+  const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true })
+    .select('-password')
+    .lean();
   if (!updatedUser) {
-    throw new ApiErrorModel(404, "User not found");
+    throw new ApiErrorModel(404, 'User not found');
   }
 
   return updatedUser;
@@ -92,15 +104,15 @@ export const updateUser = async (id: string, updates: Partial<IUser>) => {
  */
 export const deleteUser = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiErrorModel(400, "Invalid User ID");
+    throw new ApiErrorModel(400, 'Invalid User ID');
   }
 
   const deletedUser = await User.findByIdAndDelete(id);
   if (!deletedUser) {
-    throw new ApiErrorModel(404, "User not found");
+    throw new ApiErrorModel(404, 'User not found');
   }
 
-  return { message: "User deleted successfully" };
+  return { message: 'User deleted successfully' };
 };
 
 /**

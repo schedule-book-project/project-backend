@@ -1,0 +1,20 @@
+{
+  "name": "places-service",
+  "version": "0.0.1",
+  "main": "src/server.ts",
+  "scripts": {
+    "start:bun": "bun run src/server.ts",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "express": "latest",
+    "mongoose": "latest",
+    "dotenv": "latest",
+    "jsonwebtoken": "latest",
+    "cors": "latest"
+  },
+  "devDependencies": {
+    "nodemon": "latest",
+    "typescript": "latest"
+  }
+}

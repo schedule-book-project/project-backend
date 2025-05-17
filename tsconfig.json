@@ -27,7 +27,6 @@
     "baseUrl": "./",
     "paths": {
       "@gateway/*": ["microservices/api-gateway/*"],
-      "@auth/*": ["microservices/auth/*"],
       "@user/*": ["microservices/user/*"],
       "@business/*": ["microservices/business/*"],
       "@booking/*": ["microservices/booking/*"],

@@ -1,14 +1,15 @@
-import express from "express";
-import { validationResult } from "express-validator";
-import * as userService from "../services/user.service";
+import express from 'express';
+import { validationResult } from 'express-validator';
 import { ApiErrorModel } from '../../../../shared/models/error.model';
+import * as userService from '../services/user.service';
+import { UserRole } from '../models/user.model';
 
 const handleValidationErrors = (req: express.Request) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map((err) => err.msg);
-        throw new Error(errorMessages.join(", "));
-    }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((err) => err.msg);
+    throw new Error(errorMessages.join(', '));
+  }
 };
 
 /**
@@ -19,32 +20,41 @@ const handleValidationErrors = (req: express.Request) => {
  * @returns A JSON response with the created user details.
  */
 export const register = async (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
-        return;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+    return;
+  }
+
+  try {
+    const { name, email, password, role } = req.body;
+
+    // Validate role if provided
+    if (role && !Object.values(UserRole).includes(role as UserRole)) {
+      return res.status(400).json({ error: 'Invalid role' });
     }
 
-    try {
-        const { name, email, password, role } = req.body;
-        const user = await userService.registerUser(name, email, password, role);
-        res.status(201).json({ message: "User registered successfully", user });
-    } catch (error: any) {
-        res.status(400).json({ error: error.message });
-    }
+    const user = await userService.registerUser(name, email, password, role ?? UserRole.Customer);
+    res.status(201).json({ message: 'User registered successfully', user });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 // Login
 export const login = async (req: express.Request, res: express.Response) => {
-    try {
-        const { email, password } = req.body;
-        console.log(`Email:${req.body.email}password:${req.body.password}`)
-        const { token, user } = await userService.loginUser(email, password);
-        res.json({ token, user });
-    } catch (error: any) {
-        const apiError = new ApiErrorModel(400, error.message ?? 'Internal Server Error');
-        res.status(apiError.statusCode).json(apiError);
-    }
+  try {
+    const { email, password } = req.body;
+    console.log(`Email:${req.body.email}password:${req.body.password}`);
+    const { token, user } = await userService.loginUser(email, password);
+    res.json({ token, user });
+  } catch (error: any) {
+    const apiError = new ApiErrorModel(
+      400,
+      error.message ?? 'Internal Server Error',
+    );
+    res.status(apiError.statusCode).json(apiError);
+  }
 };
 
 /**
@@ -55,13 +65,16 @@ export const login = async (req: express.Request, res: express.Response) => {
  * @returns A JSON response with the list of users.
  */
 export const getUsers = async (req: express.Request, res: express.Response) => {
-    try {
-        const users = await userService.getAllUsers();
-        res.status(200).json({ success: true, users });
-    } catch (error: any) {
-        const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
-        res.status(apiError.statusCode).json(apiError);
-    }
+  try {
+    const users = await userService.getAllUsers();
+    res.status(200).json({ success: true, users });
+  } catch (error: any) {
+    const apiError = new ApiErrorModel(
+      500,
+      error.message ?? 'Internal Server Error',
+    );
+    res.status(apiError.statusCode).json(apiError);
+  }
 };
 
 /**
@@ -71,15 +84,21 @@ export const getUsers = async (req: express.Request, res: express.Response) => {
  * @param res - Express response object.
  * @returns A JSON response with the user details.
  */
-export const getUserById = async (req: express.Request, res: express.Response) => {
-    try {
-        handleValidationErrors(req);
-        const user = await userService.getUserById(req.params.id);
-        res.status(200).json({ success: true, user });
-    } catch (error: any) {
-        const apiError = new ApiErrorModel(404, error.message ?? 'Internal Server Error');
-        res.status(apiError.statusCode).json(apiError);
-    }
+export const getUserById = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    handleValidationErrors(req);
+    const user = await userService.getUserById(req.params.id);
+    res.status(200).json({ success: true, user });
+  } catch (error: any) {
+    const apiError = new ApiErrorModel(
+      404,
+      error.message ?? 'Internal Server Error',
+    );
+    res.status(apiError.statusCode).json(apiError);
+  }
 };
 
 /**
@@ -89,15 +108,29 @@ export const getUserById = async (req: express.Request, res: express.Response) =
  * @param res - Express response object.
  * @returns A JSON response with the updated user details.
  */
-export const updateUser = async (req: express.Request, res: express.Response) => {
-    try {
-        handleValidationErrors(req);
-        const user = await userService.updateUser(req.params.id, req.body);
-        res.status(200).json({ success: true, user });
-    } catch (error: any) {
-        const apiError = new ApiErrorModel(400, error.message ?? 'Internal Server Error');
-        res.status(apiError.statusCode).json(apiError);
+export const updateUser = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    handleValidationErrors(req);
+
+    const { role, ...updateData } = req.body;
+
+    // Validate role if being updated
+    if (role && !Object.values(UserRole).includes(role as UserRole)) {
+      return res.status(400).json({ error: 'Invalid role' });
     }
+
+    const user = await userService.updateUser(req.params.id, { ...updateData, role });
+    res.status(200).json({ success: true, user });
+  } catch (error: any) {
+    const apiError = new ApiErrorModel(
+      400,
+      error.message ?? 'Internal Server Error',
+    );
+    res.status(apiError.statusCode).json(apiError);
+  }
 };
 
 /**
@@ -107,34 +140,21 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
  * @param res - Express response object.
  * @returns A JSON response confirming the deletion.
  */
-export const deleteUser = async (req: express.Request, res: express.Response) => {
-    try {
-        handleValidationErrors(req);
-        await userService.deleteUser(req.params.id);
-        res.status(200).json({ success: true, message: "User deleted successfully" });
-    } catch (error: any) {
-        const apiError = new ApiErrorModel(400, error.message ?? 'Internal Server Error');
-        res.status(apiError.statusCode).json(apiError);
-    }
-};
-
-/**
- * Create an admin user.
- *
- * @param req - Express request object.
- * @param res - Express response object.
- * @returns A JSON response with the created admin details.
- */
-export const createAdmin = async (req: express.Request, res: express.Response) => {
+export const deleteUser = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
-    const { email, password, role } = req.body;
-    if (!['superadmin', 'moderator'].includes(role)) {
-      return res.status(400).json({ error: 'Invalid admin role' });
-    }
-    const admin = await userService.registerUser({ email, password, role });
-    res.status(201).json(admin);
+    handleValidationErrors(req);
+    await userService.deleteUser(req.params.id);
+    res
+      .status(200)
+      .json({ success: true, message: 'User deleted successfully' });
   } catch (error: any) {
-    const apiError = new ApiErrorModel(400, error.message ?? 'Internal Server Error');
+    const apiError = new ApiErrorModel(
+      400,
+      error.message ?? 'Internal Server Error',
+    );
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -146,12 +166,18 @@ export const createAdmin = async (req: express.Request, res: express.Response) =
  * @param res - Express response object.
  * @returns A JSON response with the list of admins.
  */
-export const getAdmins = async (req: express.Request, res: express.Response) => {
+export const getAdmins = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const admins = await userService.getUsersByRole('admin');
     res.json(admins);
   } catch (error: any) {
-    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    const apiError = new ApiErrorModel(
+      500,
+      error.message ?? 'Internal Server Error',
+    );
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -163,7 +189,10 @@ export const getAdmins = async (req: express.Request, res: express.Response) => 
  * @param res - Express response object.
  * @returns A JSON response with the admin details.
  */
-export const getAdminById = async (req: express.Request, res: express.Response) => {
+export const getAdminById = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const admin = await userService.getUserById(req.params.id);
     if (!admin || !['superadmin', 'moderator'].includes(admin.role)) {
@@ -171,7 +200,10 @@ export const getAdminById = async (req: express.Request, res: express.Response) 
     }
     res.json(admin);
   } catch (error: any) {
-    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    const apiError = new ApiErrorModel(
+      500,
+      error.message ?? 'Internal Server Error',
+    );
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -183,12 +215,18 @@ export const getAdminById = async (req: express.Request, res: express.Response) 
  * @param res - Express response object.
  * @returns A JSON response confirming the deletion.
  */
-export const deleteAdmin = async (req: express.Request, res: express.Response) => {
+export const deleteAdmin = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     await userService.deleteUser(req.params.id);
     res.json({ message: 'Admin deleted' });
   } catch (error: any) {
-    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    const apiError = new ApiErrorModel(
+      500,
+      error.message ?? 'Internal Server Error',
+    );
     res.status(apiError.statusCode).json(apiError);
   }
 };

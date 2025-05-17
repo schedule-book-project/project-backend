@@ -2,13 +2,24 @@ import {Document, model, Schema} from "mongoose";
 import bcrypt from "bcryptjs";
 
 /**
+ * Enum-like type for user roles in the system.
+ */
+export enum UserRole {
+  Customer = "customer",
+  Business = "business",
+  Admin = "admin",
+  SuperAdmin = "superadmin",
+  Moderator = "moderator",
+}
+
+/**
  * Interface representing a user in the system.
  */
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "customer" | "business" | "admin" | "superadmin" | "moderator";
+  role: UserRole;
   location?: {
     latitude: number;
     longitude: number;
