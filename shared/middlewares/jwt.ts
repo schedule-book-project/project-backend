@@ -1,14 +1,19 @@
 import jwt from "jsonwebtoken";
+import envVars from '../config/env.validation';
+
+if (!envVars.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined');
+}
 
 export const verifyToken = (token: string) => {
-    return jwt.verify(token, process.env.JWT_SECRET!);
+    return jwt.verify(token, envVars.JWT_SECRET);
 };
 
 export const generateToken = (user: any) => {
-    if (!process.env.JWT_SECRET) {
+    if (!envVars.JWT_SECRET) {
         console.error("JWT_SECRET is not defined in environment variables");
-        console.log(jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "7d" }))
+        console.log(jwt.sign({ id: user._id, role: user.role }, envVars.JWT_SECRET, { expiresIn: "7d" }))
         throw new Error("JWT_SECRET is not defined");
     }
-    return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
+    return jwt.sign({ id: user._id, role: user.role }, envVars.JWT_SECRET, { expiresIn: "7d" });
 }

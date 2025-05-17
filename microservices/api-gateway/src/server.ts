@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import gatewayRoutes from "./routes/gateway.routes";
+import envVars from '../../../shared/config/env.validation';
 
 dotenv.config();
 const app = express();
@@ -14,5 +15,5 @@ app.use(morgan("dev"));
 // Routes
 app.use("/api", gatewayRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = envVars.PORT;
 app.listen(PORT, () => console.log(`🚀 API Gateway running on port ${PORT}`));

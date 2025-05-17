@@ -26,3 +26,5 @@ dbConnection(config.USER_MONGO_DB_URI, "User")
     console.error("Failed to connect to MongoDB:", error);
     process.exit(1); // Exit if connection fails
   });
+
+export default app;

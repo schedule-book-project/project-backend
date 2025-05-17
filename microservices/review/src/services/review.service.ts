@@ -11,40 +11,29 @@ export const createReview = async (data: Partial<IReview>) => {
 
 // Get All Reviews
 export const getAllReviews = async () => {
-  return Review.find()
-    .populate("customer", "name email")
-    .populate("business", "name location")
-    .lean();
+  return Review.find().select('_id text rating').lean();
 };
 
 // Get Reviews by Business
 export const getReviewsByBusiness = async (businessId: string) => {
   if (!Types.ObjectId.isValid(businessId)) return null;
-  return Review.find({ business: businessId })
-    .populate("customer", "name email")
-    .lean();
+  return Review.find({ business: businessId }).select('_id text rating').lean();
 };
 
 // Get Review by ID
 export const getReviewById = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) return null;
-  return Review.findById(id)
-    .populate("customer", "name email")
-    .populate("business", "name location")
-    .lean();
+  return Review.findById(id).select('_id text rating').lean();
 };
 
 // Update Review
 export const updateReview = async (id: string, updates: Partial<IReview>) => {
   if (!Types.ObjectId.isValid(id)) return null;
-  return Review.findByIdAndUpdate(id, updates, { new: true })
-    .populate("customer", "name email")
-    .populate("business", "name location")
-    .lean();
+  return Review.findByIdAndUpdate(id, updates, { new: true }).select('_id text rating').lean();
 };
 
 // Delete Review
 export const deleteReview = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) return null;
-  return Review.findByIdAndDelete(id);
+  return Review.findByIdAndDelete(id).select('_id text rating').lean();
 };

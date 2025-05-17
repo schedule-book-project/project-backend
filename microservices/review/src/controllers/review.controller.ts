@@ -2,16 +2,22 @@ import express from "express";
 import * as reviewService from "@review/src/services/review.service";
 import { Types } from "mongoose";
 import { ApiErrorModel } from '../../../../shared/models/error.model';
+import { sanitizeInput } from '../../../../shared/utils/sanitizeInput';
+import logger from '../../../../shared/logger/logger';
 
 // Create Review
 export const createReview = async (req: express.Request, res: express.Response) => {
   try {
+    const sanitizedReviewText = sanitizeInput(req.body.text);
+
     const review = await reviewService.createReview({
       ...req.body,
+      text: sanitizedReviewText,
       customer: (req as any).user.userId,
     });
     res.status(201).json({ success: true, review });
   } catch (error: any) {
+    logger.error('Error in review controller:', { error });
     const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
     res.status(apiError.statusCode).json(apiError);
   }
@@ -23,6 +29,7 @@ export const getAllReviews = async (req: express.Request, res: express.Response)
     const reviews = await reviewService.getAllReviews();
     res.status(200).json({ success: true, reviews });
   } catch (error: any) {
+    logger.error('Error in review controller:', { error });
     const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
     res.status(apiError.statusCode).json(apiError);
   }
@@ -39,6 +46,7 @@ export const getReviewsByBusiness = async (req: express.Request, res: express.Re
     const reviews = await reviewService.getReviewsByBusiness(req.params.businessId);
     res.status(200).json({ success: true, reviews });
   } catch (error: any) {
+    logger.error('Error in review controller:', { error });
     const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
     res.status(apiError.statusCode).json(apiError);
   }
@@ -60,6 +68,7 @@ export const getReviewById = async (req: express.Request, res: express.Response)
 
     res.json({ success: true, review });
   } catch (error: any) {
+    logger.error('Error in review controller:', { error });
     const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
     res.status(apiError.statusCode).json(apiError);
   }
@@ -73,7 +82,9 @@ export const updateReview = async (req: express.Request, res: express.Response) 
       return
     }
 
-    const review = await reviewService.updateReview(req.params.id, req.body);
+    const sanitizedReviewText = sanitizeInput(req.body.text);
+
+    const review = await reviewService.updateReview(req.params.id, { ...req.body, text: sanitizedReviewText });
     if (!review) {
       res.status(404).json({ error: "Review not found" });
       return
@@ -81,6 +92,7 @@ export const updateReview = async (req: express.Request, res: express.Response) 
 
     res.json({ success: true, review });
   } catch (error: any) {
+    logger.error('Error in review controller:', { error });
     const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
     res.status(apiError.statusCode).json(apiError);
   }
@@ -102,6 +114,7 @@ export const deleteReview = async (req: express.Request, res: express.Response) 
 
     res.json({ success: true, message: "Review deleted" });
   } catch (error: any) {
+    logger.error('Error in review controller:', { error });
     const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
     res.status(apiError.statusCode).json(apiError);
   }

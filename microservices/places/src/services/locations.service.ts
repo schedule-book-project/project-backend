@@ -1,5 +1,10 @@
 import axios from "axios";
 import { ApiErrorModel } from '../../../../shared/models/error.model';
+import envVars from '../../../../shared/config/env.validation';
+import logger from '../../../../shared/logger/logger';
+
+// Use envVars instead of process.env directly
+const apiKey = envVars.HERE_API_KEY;
 
 // 📌 Get user location via IP (Option 2)
 export const getUserLocationByIP = async (ip: string) => {
@@ -24,7 +29,6 @@ export const getUserLocationByIP = async (ip: string) => {
 // 📌 Convert Address to Lat/Lng (Option 3)
 export const getCoordinatesFromAddress = async (street: string, city: string, state: string, country: string, postalCode?: string, language: string = "en") => {
     try {
-      const apiKey = process.env.HERE_API_KEY;
       if (!apiKey) throw new ApiErrorModel(500, "HERE API key is missing");
   
       let addressParts = [street, city];
@@ -63,6 +67,7 @@ export const getCoordinatesFromAddress = async (street: string, city: string, st
       };
     } catch (error) {
       console.error("Address Geocoding Error:", error);
+      logger.error('Error in locations service:', { error });
       throw error;
     }
   };
@@ -70,9 +75,6 @@ export const getCoordinatesFromAddress = async (street: string, city: string, st
 // 📌 Search Nearby Places using OpenStreetMap (For any method)
 export const searchNearbyPlaces = async ( query: string, lat: number, lng: number, language: string = "en") => {
     try {
-      const apiKey = process.env.HERE_API_KEY;
-      if (!apiKey) throw new ApiErrorModel(500, "HERE API key is missing");
-  
       const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lng}&q=${encodeURIComponent(query)}&limit=10&lang=${language}&apiKey=${apiKey}`;
   
       const response = await axios.get(apiUrl);
@@ -88,6 +90,7 @@ export const searchNearbyPlaces = async ( query: string, lat: number, lng: numbe
       }));
     } catch (error) {
       console.error("Error fetching places:", error);
+      logger.error('Error in locations service:', { error });
       return [];
     }
   };

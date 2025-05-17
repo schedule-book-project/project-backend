@@ -11,7 +11,7 @@ export const registerUser = async (
   password: string,
   role: string,
 ) => {
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email }).select('_id email').lean();
   if (existingUser) throw new Error('User already exists');
 
   const newUser = new User({
@@ -28,7 +28,7 @@ export const registerUser = async (
 // Login
 export const loginUser = async (email: string, password: string) => {
   console.log(email);
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const user = await User.findOne({ email: email.toLowerCase() }).select('_id email password').lean();
   console.log(user);
   if (!user) throw new Error('Invalid credentials');
 
@@ -46,7 +46,7 @@ export const loginUser = async (email: string, password: string) => {
  * @returns A list of all users.
  */
 export const getAllUsers = async () => {
-  const users = User.find().select('-password').lean();
+  const users = await User.find().select('-password').lean();
   console.log('Found users:', users);
   return users;
 };
@@ -86,9 +86,7 @@ export const updateUser = async (id: string, updates: Partial<IUser>) => {
     updates.password = await bcrypt.hash(updates.password, 10);
   }
 
-  const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true })
-    .select('-password')
-    .lean();
+  const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true }).select('-password').lean();
   if (!updatedUser) {
     throw new ApiErrorModel(404, 'User not found');
   }
@@ -107,7 +105,7 @@ export const deleteUser = async (id: string) => {
     throw new ApiErrorModel(400, 'Invalid User ID');
   }
 
-  const deletedUser = await User.findByIdAndDelete(id);
+  const deletedUser = await User.findByIdAndDelete(id).select('_id email').lean();
   if (!deletedUser) {
     throw new ApiErrorModel(404, 'User not found');
   }
@@ -122,5 +120,5 @@ export const deleteUser = async (id: string) => {
  * @returns A list of users with the specified role.
  */
 export const getUsersByRole = async (role: string) => {
-  return User.find({ role });
+  return User.find({ role }).select('_id email role').lean();
 };
