@@ -14,9 +14,9 @@ app.use(express.json());
 // Routes
 app.use("/api/bookings", bookingRoutes);
 
-setupSwagger(app, 'User Service');
+setupSwagger(app, 'Booking Service');
 
-const PORT = config.BOOKING_PORT || 5004;
+const PORT = config.BOOKING_PORT ?? 5004;
 dbConnection(config.BOOKING_MONGO_DB_URI, "Booking")
   .then(() => {
     console.log(`MongoDB connected to ${config.BOOKING_MONGO_DB_URI}`);

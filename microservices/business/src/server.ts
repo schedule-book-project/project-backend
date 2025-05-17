@@ -3,16 +3,20 @@ import cors from "cors";
 import businessRoutes from "./routes/business.routes";
 import dbConnection from "@shared/database/db.ts";
 import {config} from "@shared/config/environment.handler.ts";
+import { setupSwagger } from '@shared/swagger/config';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Swagger setup
+setupSwagger(app, 'Business Service');
+
 // Routes
 app.use("/api/business", businessRoutes);
 
-const PORT = config.BUSINESS_PORT || 5003;
+const PORT = config.BUSINESS_PORT ?? 5003;
 dbConnection(config.BUSINESS_MONGO_DB_URI, "Business")
   .then(() => {
     console.log(`MongoDB connected to ${config.BUSINESS_MONGO_DB_URI}`);

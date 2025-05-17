@@ -3,12 +3,14 @@ import { validationResult } from 'express-validator';
 import { ApiErrorModel } from '../../../../shared/models/error.model';
 import * as userService from '../services/user.service';
 import { UserRole } from '../models/user.model';
+import logger from '../../../../shared/logger/logger';
+import { validateMongoId } from '../../../../shared/utils/validateMongoId';
 
 const handleValidationErrors = (req: express.Request) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((err) => err.msg);
-    throw new Error(errorMessages.join(', '));
+    throw new ApiErrorModel(400, errorMessages.join(', '));
   }
 };
 
@@ -20,24 +22,21 @@ const handleValidationErrors = (req: express.Request) => {
  * @returns A JSON response with the created user details.
  */
 export const register = async (req: express.Request, res: express.Response) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
-    return;
-  }
-
   try {
+    handleValidationErrors(req);
     const { name, email, password, role } = req.body;
 
-    // Validate role if provided
     if (role && !Object.values(UserRole).includes(role as UserRole)) {
-      return res.status(400).json({ error: 'Invalid role' });
+      throw new ApiErrorModel(400, 'Invalid role');
     }
 
     const user = await userService.registerUser(name, email, password, role ?? UserRole.Customer);
+    logger.info(`User registered successfully: ${user.email}`);
     res.status(201).json({ message: 'User registered successfully', user });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    logger.error(`Error in register: ${error.message}`);
+    const apiError = error instanceof ApiErrorModel ? error : new ApiErrorModel(400, error.message);
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -45,10 +44,11 @@ export const register = async (req: express.Request, res: express.Response) => {
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const { email, password } = req.body;
-    console.log(`Email:${req.body.email}password:${req.body.password}`);
+    logger.info(`Login attempt for email: ${email}`);
     const { token, user } = await userService.loginUser(email, password);
     res.json({ token, user });
   } catch (error: any) {
+    logger.error(`Error in login: ${error.message}`);
     const apiError = new ApiErrorModel(
       400,
       error.message ?? 'Internal Server Error',
@@ -89,10 +89,11 @@ export const getUserById = async (
   res: express.Response,
 ) => {
   try {
-    handleValidationErrors(req);
+    validateMongoId(req.params.id, 'User');
     const user = await userService.getUserById(req.params.id);
     res.status(200).json({ success: true, user });
   } catch (error: any) {
+    logger.error(`Error in getUserById: ${error.message}`);
     const apiError = new ApiErrorModel(
       404,
       error.message ?? 'Internal Server Error',
@@ -117,18 +118,14 @@ export const updateUser = async (
 
     const { role, ...updateData } = req.body;
 
-    // Validate role if being updated
     if (role && !Object.values(UserRole).includes(role as UserRole)) {
-      return res.status(400).json({ error: 'Invalid role' });
+      throw new ApiErrorModel(400, 'Invalid role');
     }
 
     const user = await userService.updateUser(req.params.id, { ...updateData, role });
     res.status(200).json({ success: true, user });
   } catch (error: any) {
-    const apiError = new ApiErrorModel(
-      400,
-      error.message ?? 'Internal Server Error',
-    );
+    const apiError = error instanceof ApiErrorModel ? error : new ApiErrorModel(400, error.message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -145,12 +142,14 @@ export const deleteUser = async (
   res: express.Response,
 ) => {
   try {
-    handleValidationErrors(req);
+    validateMongoId(req.params.id, 'User');
     await userService.deleteUser(req.params.id);
+    logger.info(`User deleted successfully: ${req.params.id}`);
     res
       .status(200)
       .json({ success: true, message: 'User deleted successfully' });
   } catch (error: any) {
+    logger.error(`Error in deleteUser: ${error.message}`);
     const apiError = new ApiErrorModel(
       400,
       error.message ?? 'Internal Server Error',

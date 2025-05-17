@@ -1,6 +1,6 @@
 export const services = {
-    admin: "http://localhost:5005/api/admin",
-    business: "http://localhost:5006/api/business",
-    booking: "http://localhost:5007/api/booking",
-    review: "http://localhost:5008/api/review"
+    admin: `${process.env.ADMIN_SERVICE_URL}/api/admin`,
+    business: `${process.env.BUSINESS_SERVICE_URL}/api/business`,
+    booking: `${process.env.BOOKING_SERVICE_URL}/api/booking`,
+    review: `${process.env.REVIEW_SERVICE_URL}/api/review`
 };
