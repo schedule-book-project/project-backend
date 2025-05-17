@@ -1,10 +1,13 @@
 import axios from "axios";
+import { ApiErrorModel } from '../../../../shared/models/error.model';
 
 // 📌 Get user location via IP (Option 2)
 export const getUserLocationByIP = async (ip: string) => {
     try {
         const response = await axios.get(`http://ip-api.com/json/${ip}`);
-        if (response.data.status !== "success") throw new Error("Could not determine location");
+        if (response.data.status !== 'success') {
+          throw new ApiErrorModel(400, 'Could not determine location');
+        }
 
         return {
             lat: response.data.lat,
@@ -22,7 +25,7 @@ export const getUserLocationByIP = async (ip: string) => {
 export const getCoordinatesFromAddress = async (street: string, city: string, state: string, country: string, postalCode?: string, language: string = "en") => {
     try {
       const apiKey = process.env.HERE_API_KEY;
-      if (!apiKey) throw new Error("HERE API key is missing");
+      if (!apiKey) throw new ApiErrorModel(500, "HERE API key is missing");
   
       let addressParts = [street, city];
       if (postalCode) addressParts.unshift(postalCode);
@@ -40,13 +43,14 @@ export const getCoordinatesFromAddress = async (street: string, city: string, st
   
       if (!response.data.items || response.data.items.length === 0) {
         console.log("No exact match, falling back to city-level");
-        address = `${city}${country ? `, ${country}` : ""}`;
+        // Refactored nested template literal
+        address = country ? `${city}, ${country}` : city;
         apiUrl = `https://geocode.search.hereapi.com/v1/geocode?q=${encodeURIComponent(address)}&apiKey=${apiKey}&lang=${language}`;
         if (country) apiUrl += `&in=countryCode:${country}`;
         response = await axios.get(apiUrl);
   
         if (!response.data.items || response.data.items.length === 0) {
-          throw new Error("Address not found, even at city level");
+          throw new ApiErrorModel(404, "Address not found, even at city level");
         }
       }
   
@@ -67,7 +71,7 @@ export const getCoordinatesFromAddress = async (street: string, city: string, st
 export const searchNearbyPlaces = async ( query: string, lat: number, lng: number, language: string = "en") => {
     try {
       const apiKey = process.env.HERE_API_KEY;
-      if (!apiKey) throw new Error("HERE API key is missing");
+      if (!apiKey) throw new ApiErrorModel(500, "HERE API key is missing");
   
       const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lng}&q=${encodeURIComponent(query)}&limit=10&lang=${language}&apiKey=${apiKey}`;
   

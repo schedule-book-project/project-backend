@@ -1,6 +1,7 @@
 import express from "express";
-import * as reviewService from "../services/review.service";
+import * as reviewService from "@review/src/services/review.service";
 import { Types } from "mongoose";
+import { ApiErrorModel } from '../../../../shared/models/error.model';
 
 // Create Review
 export const createReview = async (req: express.Request, res: express.Response) => {
@@ -11,7 +12,8 @@ export const createReview = async (req: express.Request, res: express.Response) 
     });
     res.status(201).json({ success: true, review });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -21,7 +23,8 @@ export const getAllReviews = async (req: express.Request, res: express.Response)
     const reviews = await reviewService.getAllReviews();
     res.status(200).json({ success: true, reviews });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 }
 
@@ -36,7 +39,8 @@ export const getReviewsByBusiness = async (req: express.Request, res: express.Re
     const reviews = await reviewService.getReviewsByBusiness(req.params.businessId);
     res.status(200).json({ success: true, reviews });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -56,7 +60,8 @@ export const getReviewById = async (req: express.Request, res: express.Response)
 
     res.json({ success: true, review });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -76,7 +81,8 @@ export const updateReview = async (req: express.Request, res: express.Response) 
 
     res.json({ success: true, review });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -96,6 +102,7 @@ export const deleteReview = async (req: express.Request, res: express.Response) 
 
     res.json({ success: true, message: "Review deleted" });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };

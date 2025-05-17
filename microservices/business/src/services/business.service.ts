@@ -1,4 +1,4 @@
-import Business from "../models/business.model";
+import Business from "@business/src/models/business.model";
 
 export const createBusiness = async (data: any) => {
     const business = new Business(data);

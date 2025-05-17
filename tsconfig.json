@@ -24,17 +24,18 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
+    "baseUrl": "./",
     "paths": {
-      "@gateway/*": ["./microservices/api-gateway/*"],
-      "@auth/*": ["./microservices/auth/*"],
-      "@admin/*": ["./microservices/admin/*"],
-      "@user/*": ["./microservices/user/*"],
-      "@business/*": ["./microservices/business/*"],
-      "@booking/*": ["./microservices/booking/*"],
-      "@review/*": ["./microservices/review/*"],
-      "@microservices/*": ["./microservices/*"],
-      "@shared/*": ["./shared/*"],
-      "@resources/*": ["./resources/*"]
+      "@gateway/*": ["microservices/api-gateway/*"],
+      "@auth/*": ["microservices/auth/*"],
+      "@user/*": ["microservices/user/*"],
+      "@business/*": ["microservices/business/*"],
+      "@booking/*": ["microservices/booking/*"],
+      "@review/*": ["microservices/review/*"],
+      "@places/*": ["microservices/places/*"],
+      "@microservices/*": ["microservices/*"],
+      "@shared/*": ["shared/*"],
+      "@resources/*": ["resources/*"]
     }
   }
 }

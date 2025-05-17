@@ -1,5 +1,5 @@
 import express from "express";
-import { searchNearbyPlaces, getUserLocationByIP, getCoordinatesFromAddress } from "../services/locations.service";
+import { searchNearbyPlaces, getUserLocationByIP, getCoordinatesFromAddress } from "@places/src/services/locations.service";
 
 export const getNearbyPlaces = async (req: express.Request, res: express.Response) => {
     try {
@@ -22,7 +22,7 @@ export const getNearbyPlaces = async (req: express.Request, res: express.Respons
 
 export const getPlacesByIP = async (req: express.Request, res: express.Response) => {
     try {
-        const ip = req.ip || req.headers["x-forwarded-for"] || "8.8.8.8"; // Default IP for testing
+        const ip = req.ip ?? req.headers["x-forwarded-for"] ?? "8.8.8.8"; // Default IP for testing
         const location = await getUserLocationByIP(ip as string);
         if (!location) {
             res.status(400).json({ error: "Could not determine location" });

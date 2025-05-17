@@ -27,31 +27,6 @@ export interface IBooking extends Document {
 }
 
 // 3️⃣ Mongoose Schema
-/**
- * @swagger
- * components:
- *   schemas:
- *     Booking:
- *       type: object
- *       required:
- *         - startDate
- *         - endDate
- *         - userId
- *         - propertyId
- *       properties:
- *         startDate:
- *           type: string
- *           format: date-time
- *         endDate:
- *           type: string
- *           format: date-time
- *         userId:
- *           type: string
- *           example: 507f1f77bcf86cd799439011
- *         propertyId:
- *           type: string
- *           example: 6543a2b1cde543210abcdef1
- */
 const BookingSchema = new Schema<IBooking>(
   {
     customer: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },

@@ -1,5 +1,6 @@
 import express from "express";
 import * as bookingService from "../services/booking.service";
+import { ApiErrorModel } from '../../../../shared/models/error.model';
 
 // Create a booking
 export const createBooking = async (req: express.Request, res: express.Response) => {
@@ -10,7 +11,8 @@ export const createBooking = async (req: express.Request, res: express.Response)
     });
     res.status(201).json(booking);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -20,7 +22,8 @@ export const getBookings = async (req: express.Request, res: express.Response) =
     const bookings = await bookingService.getAllBookings();
     res.status(200).json({ success: true, bookings });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -34,7 +37,8 @@ export const getBookingById = async (req: express.Request, res: express.Response
     }
     res.json(booking);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -48,7 +52,8 @@ export const updateBooking = async (req: express.Request, res: express.Response)
     }
     res.json(booking);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };
 
@@ -62,6 +67,7 @@ export const deleteBooking = async (req: express.Request, res: express.Response)
     }
     res.json({ message: "Booking deleted" });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+    res.status(apiError.statusCode).json(apiError);
   }
 };

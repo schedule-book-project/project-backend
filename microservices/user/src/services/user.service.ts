@@ -2,6 +2,7 @@ import User, { type IUser } from "../models/user.model";
 import { Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import { generateToken } from "@shared/middlewares/jwt";
+import type { ApiErrorModel } from "@shared/models/error.model";
 
 // Create a User
 export const registerUser = async (name: string, email: string, password: string, role: string) => {
@@ -29,31 +30,46 @@ export const loginUser = async (email: string, password: string) => {
   return { token, user: { id: user._id, email: user.email, role: user.role } };
 };
 
-// Get All Users
+/**
+ * Service to get all users.
+ *
+ * @returns A list of all users.
+ */
 export const getAllUsers = async () => {
   const users = User.find().select("-password").lean();
   console.log("Found users:", users);
   return users
 };
 
-// Get User by ID
+/**
+ * Service to get a user by ID.
+ *
+ * @param id - The ID of the user.
+ * @returns The user details.
+ */
 export const getUserById = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new Error("Invalid User ID");
+    throw new ApiErrorModel(400, "Invalid User ID");
   }
 
   const user = await User.findById(id).select("-password").lean();
   if (!user) {
-    throw new Error("User not found");
+    throw new ApiErrorModel(404, "User not found");
   }
 
   return user;
 };
 
-// Update User
+/**
+ * Service to update a user.
+ *
+ * @param id - The ID of the user.
+ * @param updates - The updates to apply.
+ * @returns The updated user.
+ */
 export const updateUser = async (id: string, updates: Partial<IUser>) => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new Error("Invalid User ID");
+    throw new ApiErrorModel(400, "Invalid User ID");
   }
 
   if (updates.password) {
@@ -62,22 +78,37 @@ export const updateUser = async (id: string, updates: Partial<IUser>) => {
 
   const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true }).select("-password").lean();
   if (!updatedUser) {
-    throw new Error("User not found");
+    throw new ApiErrorModel(404, "User not found");
   }
 
   return updatedUser;
 };
 
-// Delete User
+/**
+ * Service to delete a user.
+ *
+ * @param id - The ID of the user.
+ * @returns Confirmation of deletion.
+ */
 export const deleteUser = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new Error("Invalid User ID");
+    throw new ApiErrorModel(400, "Invalid User ID");
   }
 
   const deletedUser = await User.findByIdAndDelete(id);
   if (!deletedUser) {
-    throw new Error("User not found");
+    throw new ApiErrorModel(404, "User not found");
   }
 
   return { message: "User deleted successfully" };
+};
+
+/**
+ * Service to get users by role.
+ *
+ * @param role - The role to filter by.
+ * @returns A list of users with the specified role.
+ */
+export const getUsersByRole = async (role: string) => {
+  return User.find({ role });
 };

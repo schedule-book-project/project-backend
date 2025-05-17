@@ -1,6 +1,11 @@
-import express from "express";
-import * as userController from "../controllers/user.controller.ts";
-import {check} from "express-validator";
+import {
+  authenticate,
+  isSuperAdmin,
+} from '@shared/middlewares/auth.middleware';
+import asyncHandler from '@shared/utils/asyncHandler';
+import { userValidation } from '@shared/validations/validationSchemas';
+import * as userController from '@user/src/controllers/user.controller';
+import express from 'express';
 
 const router = express.Router();
 
@@ -27,25 +32,42 @@ router.post(
 );
 
 // Get all users
-router.get("/", userController.getUsers);
+router.get('/', asyncHandler(userController.getUsers));
 
 // Get user by ID
-router.get("/:id", userController.getUserById);
+router.get('/:id', asyncHandler(userController.getUserById));
 
 // Update user
-router.put("/:id", 
-[
-  check("email", "Valid email is required").isEmail(),
-  check("password", "Password must be at least 8 characters").isLength({min: 8}),
-  check("password", "Password must contain at least one uppercase letter").matches(/[A-Z]/),
-  check("password", "Password must contain at least one lowercase letter").matches(/[a-z]/),
-  check("password", "Password must contain at least one number").matches(/\d/),
-  check("password", "Password must contain at least one special character").matches(/[\W_]/)
-], 
-userController.updateUser
-);
+router.put('/:id', userValidation, asyncHandler(userController.updateUser));
 
 // Delete user
-router.delete("/:id", userController.deleteUser);
+router.delete('/:id', asyncHandler(userController.deleteUser));
+
+// Create Admin
+router.post(
+  '/admin',
+  authenticate,
+  isSuperAdmin,
+  userValidation,
+  asyncHandler(userController.createAdmin),
+);
+
+// Get Admins
+router.get('/admins', authenticate, asyncHandler(userController.getAdmins));
+
+// Get Admin by ID
+router.get(
+  '/admins/:id',
+  authenticate,
+  asyncHandler(userController.getAdminById),
+);
+
+// Delete Admin
+router.delete(
+  '/admins/:id',
+  authenticate,
+  isSuperAdmin,
+  asyncHandler(userController.deleteAdmin),
+);
 
 export default router;

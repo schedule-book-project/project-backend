@@ -1,12 +1,14 @@
 import {Document, model, Schema} from "mongoose";
 import bcrypt from "bcryptjs";
 
-// 1. TypeScript Interface for Type Safety
+/**
+ * Interface representing a user in the system.
+ */
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "customer" | "business" | "admin";
+  role: "customer" | "business" | "admin" | "superadmin" | "moderator";
   location?: {
     latitude: number;
     longitude: number;
@@ -14,7 +16,9 @@ export interface IUser extends Document {
   createdAt: Date;
 }
 
-// 2. Mongoose Schema for User Model
+/**
+ * Mongoose schema for the user model.
+ */
 const UserSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
@@ -22,7 +26,7 @@ const UserSchema = new Schema<IUser>(
     password: { type: String, required: true },
     role: {
       type: String,
-      enum: ["customer", "business", "admin"],
+      enum: ["customer", "business", "admin", "superadmin", "moderator"],
       required: true,
     },
     location: {
@@ -34,7 +38,9 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// 3. Hash password before saving
+/**
+ * Pre-save hook to hash the user's password before saving.
+ */
 UserSchema.pre("save", async function (next) {
   try {
     if (!this.isModified("password") || !this.password) return next();
@@ -46,12 +52,16 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// 4. Compare password method
+/**
+ * Method to compare a plain text password with the hashed password.
+ */
 UserSchema.methods.comparePassword = function (password: string) {
   return bcrypt.compare(password, this.password);
 }
 
-// 5. Mongoose Model creation
+/**
+ * Mongoose Model creation
+ */
 const User = model<IUser>("User", UserSchema);
 
 export default User;

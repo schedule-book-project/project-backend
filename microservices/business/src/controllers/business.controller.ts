@@ -1,5 +1,6 @@
 import express from "express";
 import * as businessService from "../services/business.service";
+import { ApiErrorModel } from '../../../../shared/models/error.model';
 
 // Create a business
 export const createBusiness = async (req: express.Request, res: express.Response) => {
@@ -15,7 +16,8 @@ export const createBusiness = async (req: express.Request, res: express.Response
         const business = await businessService.createBusiness(req.body);
         res.status(201).json({ success: true, business });
     } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
+        const apiError = new ApiErrorModel(400, error.message ?? 'Internal Server Error');
+        res.status(apiError.statusCode).json(apiError);
     }
 };
 
@@ -25,7 +27,8 @@ export const getBusinesses = async (_req: express.Request, res: express.Response
         const businesses = await businessService.getAllBusinesses();
         res.json({ success: true, businesses });
     } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
+        const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+        res.status(apiError.statusCode).json(apiError);
     }
 };
 
@@ -38,7 +41,8 @@ export const getBusinessById = async (req: express.Request, res: express.Respons
         }
         res.json({ success: true, business });
     } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
+        const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+        res.status(apiError.statusCode).json(apiError);
     }
 };
 
@@ -60,7 +64,8 @@ export const updateBusiness = async (req: express.Request, res: express.Response
 
         res.json({ success: true, business: updatedBusiness });
     } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
+        const apiError = new ApiErrorModel(400, error.message ?? 'Internal Server Error');
+        res.status(apiError.statusCode).json(apiError);
     }
 };
 
@@ -76,6 +81,7 @@ export const deleteBusiness = async (req: express.Request, res: express.Response
 
         res.json({ success: true, message: "Business deleted successfully" });
     } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
+        const apiError = new ApiErrorModel(500, error.message ?? 'Internal Server Error');
+        res.status(apiError.statusCode).json(apiError);
     }
 };

@@ -1,5 +1,5 @@
-import Review from "../models/review.model";
-import type { IReview } from "../models/review.model";
+import Review from "@review/src/models/review.model";
+import type { IReview } from "@review/src/models/review.model";
 import { Types } from "mongoose";
 
 // Create Review
