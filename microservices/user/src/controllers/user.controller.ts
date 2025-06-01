@@ -7,7 +7,7 @@ import logger from '../../../../shared/logger/logger';
 import { validateMongoId } from '../../../../shared/utils/validateMongoId';
 import { sanitizeInput } from '../../../../shared/utils/sanitizeInput';
 
-const handleValidationErrors = (req: express.Request) => {
+const handleValidationErrors = (req: express.Request): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((err) => err.msg);
@@ -22,7 +22,10 @@ const handleValidationErrors = (req: express.Request) => {
  * @param res - Express response object.
  * @returns A JSON response with the created user details.
  */
-export const register = async (req: express.Request, res: express.Response) => {
+export const register = async (
+  req: express.Request,
+  res: express.Response,
+): Promise<void> => {
   try {
     handleValidationErrors(req);
     const { name, email, password, role } = req.body;
@@ -34,29 +37,45 @@ export const register = async (req: express.Request, res: express.Response) => {
       throw new ApiErrorModel(400, 'Invalid role');
     }
 
-    const user = await userService.registerUser(name, sanitizedEmail, sanitizedPassword, role ?? UserRole.Customer);
+    const user = await userService.registerUser(
+      name,
+      sanitizedEmail,
+      sanitizedPassword,
+      role ?? UserRole.Customer,
+    );
     logger.info(`User registered successfully: ${user.email}`);
     res.status(201).json({ message: 'User registered successfully', user });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = error instanceof ApiErrorModel ? error : new ApiErrorModel(400, error.message);
+  } catch (error: unknown) {
+    logger.error('Error in user controller registering user:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'An unexpected error occurred during registration.';
+    const apiError =
+      error instanceof ApiErrorModel ? error : new ApiErrorModel(400, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
 
 // Login
-export const login = async (req: express.Request, res: express.Response) => {
+export const login = async (
+  req: express.Request,
+  res: express.Response,
+): Promise<void> => {
   try {
     const { email, password } = req.body;
     logger.info(`Login attempt for email: ${email}`);
     const { token, user } = await userService.loginUser(email, password);
     res.json({ token, user });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      400,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller login:', { errorDetail: error });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error during login.';
+    const apiError = new ApiErrorModel(400, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -68,16 +87,22 @@ export const login = async (req: express.Request, res: express.Response) => {
  * @param res - Express response object.
  * @returns A JSON response with the list of users.
  */
-export const getUsers = async (req: express.Request, res: express.Response) => {
+export const getUsers = async (
+  req: express.Request,
+  res: express.Response,
+): Promise<void> => {
   try {
     const users = await userService.getAllUsers();
     res.status(200).json({ success: true, users });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      500,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller getting users:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error while fetching users.';
+    const apiError = new ApiErrorModel(500, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -92,17 +117,20 @@ export const getUsers = async (req: express.Request, res: express.Response) => {
 export const getUserById = async (
   req: express.Request,
   res: express.Response,
-) => {
+): Promise<void> => {
   try {
     validateMongoId(req.params.id, 'User');
     const user = await userService.getUserById(req.params.id);
     res.status(200).json({ success: true, user });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      404,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller getting user by ID:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error while fetching user by ID.';
+    const apiError = new ApiErrorModel(404, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -117,7 +145,7 @@ export const getUserById = async (
 export const updateUser = async (
   req: express.Request,
   res: express.Response,
-) => {
+): Promise<void> => {
   try {
     handleValidationErrors(req);
 
@@ -127,11 +155,21 @@ export const updateUser = async (
       throw new ApiErrorModel(400, 'Invalid role');
     }
 
-    const user = await userService.updateUser(req.params.id, { ...updateData, role });
+    const user = await userService.updateUser(req.params.id, {
+      ...updateData,
+      role,
+    });
     res.status(200).json({ success: true, user });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = error instanceof ApiErrorModel ? error : new ApiErrorModel(400, error.message);
+  } catch (error: unknown) {
+    logger.error('Error in user controller updating user:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'An unexpected error occurred while updating user.';
+    const apiError =
+      error instanceof ApiErrorModel ? error : new ApiErrorModel(400, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -146,7 +184,7 @@ export const updateUser = async (
 export const deleteUser = async (
   req: express.Request,
   res: express.Response,
-) => {
+): Promise<void> => {
   try {
     validateMongoId(req.params.id, 'User');
     await userService.deleteUser(req.params.id);
@@ -154,12 +192,15 @@ export const deleteUser = async (
     res
       .status(200)
       .json({ success: true, message: 'User deleted successfully' });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      400,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller deleting user:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error while deleting user.';
+    const apiError = new ApiErrorModel(400, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -174,16 +215,19 @@ export const deleteUser = async (
 export const getAdmins = async (
   req: express.Request,
   res: express.Response,
-) => {
+): Promise<void> => {
   try {
     const admins = await userService.getUsersByRole('admin');
     res.json(admins);
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      500,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller getting admins:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error while fetching admins.';
+    const apiError = new ApiErrorModel(500, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -198,19 +242,22 @@ export const getAdmins = async (
 export const getAdminById = async (
   req: express.Request,
   res: express.Response,
-) => {
+): Promise<void> => {
   try {
     const admin = await userService.getUserById(req.params.id);
     if (!admin || !['superadmin', 'moderator'].includes(admin.role)) {
       return res.status(404).json({ error: 'Admin not found' });
     }
     res.json(admin);
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      500,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller getting admin by ID:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error while fetching admin by ID.';
+    const apiError = new ApiErrorModel(500, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };
@@ -225,16 +272,19 @@ export const getAdminById = async (
 export const deleteAdmin = async (
   req: express.Request,
   res: express.Response,
-) => {
+): Promise<void> => {
   try {
     await userService.deleteUser(req.params.id);
     res.json({ message: 'Admin deleted' });
-  } catch (error: any) {
-    logger.error('Error in user controller:', { error });
-    const apiError = new ApiErrorModel(
-      500,
-      error.message ?? 'Internal Server Error',
-    );
+  } catch (error: unknown) {
+    logger.error('Error in user controller deleting admin:', {
+      errorDetail: error,
+    });
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Internal Server Error while deleting admin.';
+    const apiError = new ApiErrorModel(500, message);
     res.status(apiError.statusCode).json(apiError);
   }
 };

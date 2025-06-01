@@ -13,7 +13,7 @@ const envSchema = Joi.object({
   PLACES_PORT: Joi.number().required(),
   JWT_SECRET: Joi.string().required(),
   HERE_API_KEY: Joi.string().required(),
-  ENV: Joi.string().valid('dev', 'prod', 'test').default('dev')
+  ENV: Joi.string().valid('dev', 'prod', 'test').default('dev'),
 }).unknown();
 
 // Validate the environment variables

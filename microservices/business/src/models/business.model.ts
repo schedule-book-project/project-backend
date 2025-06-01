@@ -1,4 +1,4 @@
-import {Document, model, Schema} from "mongoose";
+import { Document, model, Schema } from 'mongoose';
 
 // 1️⃣ TypeScript Interface for Type Safety
 export interface IBusiness extends Document {
@@ -41,13 +41,13 @@ const BusinessSchema = new Schema<IBusiness>(
       },
     ],
     rating: { type: Number, default: 0 },
-    reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
     createdAt: { type: Date, default: Date.now },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // 3️⃣ Model Creation
-const Business = model<IBusiness>("Business", BusinessSchema);
+const Business = model<IBusiness>('Business', BusinessSchema);
 
 export default Business;

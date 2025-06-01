@@ -1,8 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import type {Express} from 'express';
+import type { Express } from 'express';
 import { loadSchemas } from './schemaLoader';
-
 
 export const SWAGGER_OPTIONS = {
   definition: {
@@ -29,7 +28,7 @@ export const SWAGGER_OPTIONS = {
   apis: ['./microservices/*/src/routes/*.ts'],
 };
 
-export function setupSwagger(app: Express, serviceName: string) {
+export function setupSwagger(app: Express, serviceName: string): void {
   const options = {
     ...SWAGGER_OPTIONS,
     definition: {

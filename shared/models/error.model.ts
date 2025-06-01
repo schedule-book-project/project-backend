@@ -5,7 +5,7 @@
 export interface ApiError {
   statusCode: number; // HTTP status code
   message: string; // Error message for the client
-  details?: any; // Optional field for additional error details
+  details?: unknown; // Optional field for additional error details
 }
 
 /**
@@ -35,7 +35,7 @@ export class ApiErrorModel {
   /**
    * Optional additional details about the error.
    */
-  public details?: any;
+  public details?: unknown;
 
   /**
    * Constructs an instance of ErrorModel.
@@ -44,7 +44,7 @@ export class ApiErrorModel {
    * @param message - Error message to be sent to the client.
    * @param details - Optional additional details about the error.
    */
-  constructor(statusCode: number, message: string, details?: any) {
+  constructor(statusCode: number, message: string, details?: unknown) {
     this.statusCode = statusCode;
     this.message = message;
     this.details = details;
@@ -57,7 +57,10 @@ export class ApiErrorModel {
    * @param statusCode - HTTP status code of the error (default is 500).
    * @returns An instance of ErrorModel.
    */
-  public static fromError(error: Error, statusCode: number = 500): ApiErrorModel {
+  public static fromError(
+    error: Error,
+    statusCode: number = 500,
+  ): ApiErrorModel {
     return new ApiErrorModel(statusCode, error.message);
   }
 

@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 
 /**
  * Utility function to handle asynchronous route handlers.
@@ -6,8 +6,10 @@ import express from "express";
  * @param fn - The asynchronous function to wrap.
  * @returns A function that catches errors and forwards them to the next middleware.
  */
-const asyncHandler = (fn: Function) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
-};
+const asyncHandler =
+  (fn: Function) =>
+  (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
 
 export default asyncHandler;

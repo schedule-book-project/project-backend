@@ -14,7 +14,10 @@ describe('User Controller', () => {
         });
 
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('message', 'User registered successfully');
+      expect(response.body).toHaveProperty(
+        'message',
+        'User registered successfully',
+      );
       expect(response.body).toHaveProperty('user');
     });
 
@@ -32,12 +35,10 @@ describe('User Controller', () => {
 
   describe('POST /login', () => {
     it('should log in a user with valid credentials', async () => {
-      const response = await request(userServer)
-        .post('/api/user/login')
-        .send({
-          email: 'testuser@example.com',
-          password: 'password123',
-        });
+      const response = await request(userServer).post('/api/user/login').send({
+        email: 'testuser@example.com',
+        password: 'password123',
+      });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('token');
@@ -45,12 +46,10 @@ describe('User Controller', () => {
     });
 
     it('should return an error for invalid credentials', async () => {
-      const response = await request(userServer)
-        .post('/api/user/login')
-        .send({
-          email: 'testuser@example.com',
-          password: 'wrongpassword',
-        });
+      const response = await request(userServer).post('/api/user/login').send({
+        email: 'testuser@example.com',
+        password: 'wrongpassword',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('message');

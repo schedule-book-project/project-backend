@@ -1,7 +1,7 @@
-import { Linter } from 'eslint';
 import globals from 'globals';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import prettierPlugin from 'eslint-plugin-prettier';
 
 /** @type {Linter.Config} */
 const config = [
@@ -24,16 +24,22 @@ const config = [
     },
     plugins: {
       '@typescript-eslint': typescriptEslintPlugin,
-      'prettier': require('eslint-plugin-prettier'),
+      prettier: prettierPlugin,
     },
     rules: {
       'prettier/prettier': 'error',
       'no-unused-vars': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/explicit-function-return-type': [
+        'warn',
+        { allowExpressions: true },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'eqeqeq': ['error', 'always'],
-      'curly': 'error',
+      eqeqeq: ['error', 'always'],
+      curly: 'error',
       'prefer-const': 'error',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
