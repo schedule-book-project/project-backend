@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken'; // Removed JwtPayload here, it's in express.d.ts indirectly
-// AdminPayload is now globally available via express.d.ts augmentation for req.admin
+import jwt from 'jsonwebtoken';
+import type { AdminPayload } from '../types/express'; // Import AdminPayload
 
 export const authenticate = (
   req: Request, // Changed from AuthenticatedRequest
@@ -22,9 +22,8 @@ export const authenticate = (
       'id' in decodedToken &&
       'role' in decodedToken
     ) {
-      // Assign to req.admin. TypeScript should infer req.admin from express.d.ts
-      // The cast ensures decodedToken matches the expected AdminPayload structure.
-      req.admin = decodedToken as Express.AdminPayload; // Or simply 'as AdminPayload' if globally recognized
+      // Assign to req.admin.
+      req.admin = decodedToken as AdminPayload;
       next();
     } else {
       throw new Error('Invalid token payload: id or role missing');

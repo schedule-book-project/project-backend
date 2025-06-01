@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import businessRoutes from './routes/business.routes';
+import healthRoutes from './routes/health.routes'; // Import health routes
 import dbConnection from '@shared/database/db.ts';
 import { config } from '@shared/config/environment.handler.ts';
 import { setupSwagger } from '@shared/swagger/config';
@@ -16,6 +17,7 @@ setupSwagger(app, 'Business Service');
 
 // Routes
 app.use('/api/business', businessRoutes);
+app.use('/', healthRoutes); // Register health routes at the root
 
 const PORT = config.BUSINESS_PORT ?? 5003;
 dbConnection(config.BUSINESS_MONGO_DB_URI, 'Business')

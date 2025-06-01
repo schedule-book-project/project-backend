@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import reviewRoutes from './routes/review.routes';
+import healthRoutes from './routes/health.routes'; // Import health routes
 import dbConnection from '@shared/database/db.ts';
 import { config } from '@shared/config/environment.handler.ts';
 import { setupSwagger } from '@shared/swagger/config';
@@ -16,6 +17,7 @@ setupSwagger(app, 'Review Service');
 
 // Routes
 app.use('/api/reviews', reviewRoutes);
+app.use('/', healthRoutes); // Register health routes at the root
 
 const PORT = config.REVIEW_PORT ?? 5005;
 dbConnection(config.REVIEW_MONGO_DB_URI, 'Review')

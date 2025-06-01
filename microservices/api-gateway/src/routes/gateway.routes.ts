@@ -1,9 +1,17 @@
-import express from 'express';
+import express, { type Request, type Response } from 'express'; // Changed to type-only imports
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { services } from '../config/services.config';
 import { authenticate } from '../../../../shared/middlewares/auth.middleware.ts';
+import { checkAllServicesHealth } from '../services/healthCheck.service';
+import asyncHandler from '../../../../shared/utils/asyncHandler';
 
 const router = express.Router();
+
+// Aggregated health check route
+router.get('/health-aggregated', asyncHandler(async (_req: Request, res: Response) => {
+  const healthStatuses = await checkAllServicesHealth();
+  res.status(200).json(healthStatuses);
+}));
 
 // Proxy for Admin Service
 router.use(

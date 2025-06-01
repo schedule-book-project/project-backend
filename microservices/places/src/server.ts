@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import locationsRoutes from './routes/locations.routes';
+import healthRoutes from './routes/health.routes'; // Import health routes
 import dbConnection from '@shared/database/db.ts';
 import { config } from '@shared/config/environment.handler.ts';
 import { setupSwagger } from '@shared/swagger/config';
@@ -16,6 +17,7 @@ setupSwagger(app, 'Places Service');
 
 // Routes
 app.use('/api/places', locationsRoutes);
+app.use('/', healthRoutes); // Register health routes at the root
 
 const PORT = config.PLACES_PORT ?? 5006;
 dbConnection(config.PLACES_MONGO_DB_URI, 'Places')

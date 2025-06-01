@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bookingRoutes from './routes/booking.routes';
+import healthRoutes from './routes/health.routes'; // Import health routes
 import dbConnection from '@shared/database/db.ts';
 import { config } from '@shared/config/environment.handler.ts';
 import { setupSwagger } from '@shared/swagger/config'; // Corrected import name
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/bookings', bookingRoutes);
+app.use('/', healthRoutes); // Register health routes at the root
 
 setupSwagger(app, 'Booking Service');
 
