@@ -35,7 +35,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
-const PORT = envVars.PORT;
+const PORT = envVars.GATEWAY_PORT;
 
 // Start server only if not in test environment or if run directly
 if (process.env.NODE_ENV !== 'test') {

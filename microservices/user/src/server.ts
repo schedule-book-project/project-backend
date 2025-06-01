@@ -4,16 +4,12 @@ import userRoutes from './routes/user.routes.ts';
 import healthRoutes from './routes/health.routes'; // Import health routes
 import dbConnection from '@shared/database/db.ts';
 import { config } from '@shared/config/environment.handler.ts';
-import { setupSwagger } from '@shared/swagger/config';
 import logger from '../../../shared/logger/logger';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-// Swagger setup
-setupSwagger(app, 'User Service');
 
 // Routes
 app.use('/api/user', userRoutes);

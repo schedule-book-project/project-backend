@@ -1,16 +1,18 @@
 import { glob } from 'glob';
 import path from 'path';
 
-export function loadSchemas(): { [key: string]: unknown } {
+export async function loadSchemas(): Promise<{ [key: string]: unknown }> {
   const schemaPaths = glob.sync('microservices/**/src/models/*.model.ts', {
     absolute: true,
   });
 
   const schemas: { [key: string]: unknown } = {};
 
-  return schemaPaths.reduce((schemas, filePath) => {
+  for (const filePath of schemaPaths) {
     const serviceName = path.basename(filePath, '.model.ts');
-    schemas[serviceName] = require(filePath).swaggerSchema;
-    return schemas;
-  }, schemas);
+    // Use dynamic import for ES modules
+    const module = await import(filePath);
+    schemas[serviceName] = module.swaggerSchema;
+  }
+  return schemas;
 }
