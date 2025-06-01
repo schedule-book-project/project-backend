@@ -9,6 +9,62 @@ export interface ApiError {
 }
 
 /**
+ * @openapi
+ * components:
+ *   schemas:
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         statusCode:
+ *           type: integer
+ *           description: HTTP status code.
+ *           example: 400
+ *         message:
+ *           type: string
+ *           description: Error message for the client.
+ *           example: 'Bad Request'
+ *         details:
+ *           type: object # Or string, or array, depending on typical usage; 'unknown' in TS allows flexibility
+ *           nullable: true
+ *           description: Optional additional error details.
+ *           example: { "field": "email", "issue": "Invalid format" }
+ *     NotFoundError:
+ *       allOf:
+ *         - $ref: '#/components/schemas/ErrorResponse'
+ *         - type: object
+ *           properties:
+ *             statusCode:
+ *               example: 404
+ *             message:
+ *               example: 'Resource not found'
+ *     BadRequestError:
+ *       allOf:
+ *         - $ref: '#/components/schemas/ErrorResponse'
+ *         - type: object
+ *           properties:
+ *             statusCode:
+ *               example: 400
+ *             message:
+ *               example: 'Invalid input parameters'
+ *     UnauthorizedError:
+ *       allOf:
+ *         - $ref: '#/components/schemas/ErrorResponse'
+ *         - type: object
+ *           properties:
+ *             statusCode:
+ *               example: 401
+ *             message:
+ *               example: 'Authentication required'
+ *     ForbiddenError:
+ *       allOf:
+ *         - $ref: '#/components/schemas/ErrorResponse'
+ *         - type: object
+ *           properties:
+ *             statusCode:
+ *               example: 403
+ *             message:
+ *               example: 'Permission denied'
+ *
  * Class representing an error model for handling and formatting errors in a REST API.
  * This class provides a standardized way to create and return error responses.
  *

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import gatewayRoutes from './routes/gateway.routes';
+import swaggerRoutes from './routes/swagger.routes'; // Import Swagger UI routes
 import envVars from '../../../shared/config/env.validation';
 import logger from '../../../shared/logger/logger';
 import fs from 'fs';
@@ -16,7 +17,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
-app.use('/api', gatewayRoutes);
+app.use('/api', gatewayRoutes); // Existing API routes
+app.use('/api-docs', swaggerRoutes); // Swagger UI at /api-docs
 
 // Health check route for API Gateway
 let gatewayVersion = 'unknown';
@@ -35,7 +37,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
-const PORT = envVars.GATEWAY_PORT;
+const PORT = envVars.PORT;
 
 // Start server only if not in test environment or if run directly
 if (process.env.NODE_ENV !== 'test') {

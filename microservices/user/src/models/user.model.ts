@@ -1,5 +1,96 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose'; // Added Types
 import bcrypt from 'bcryptjs';
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     UserResponse:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: '60564fcb544047cdc3844818'
+ *         name:
+ *           type: string
+ *           example: 'John Doe'
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: 'john.doe@example.com'
+ *         role:
+ *           type: string
+ *           enum: [customer, business, admin, superadmin, moderator] # Match UserRole enum
+ *           example: 'customer'
+ *         location:
+ *           type: object
+ *           properties:
+ *             latitude:
+ *               type: number
+ *             longitude:
+ *               type: number
+ *           nullable: true
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *     UserCreationPayload:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: 'Jane Doe'
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: 'jane.doe@example.com'
+ *         password:
+ *           type: string
+ *           format: password
+ *           minLength: 8 # Assuming a password policy
+ *           example: 'strongpassword123!'
+ *         role:
+ *           type: string
+ *           enum: [customer, business, admin, superadmin, moderator] # Match UserRole enum
+ *           default: 'customer'
+ *           example: 'customer'
+ *         location:
+ *           type: object
+ *           properties:
+ *             latitude:
+ *               type: number
+ *             longitude:
+ *               type: number
+ *           nullable: true
+ *     UserUpdatePayload:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: 'Jane Doe Updated'
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: 'jane.doe.updated@example.com'
+ *         role:
+ *           type: string
+ *           enum: [customer, business, admin, superadmin, moderator] # Match UserRole enum
+ *           example: 'admin'
+ *         location:
+ *           type: object
+ *           properties:
+ *             latitude:
+ *               type: number
+ *             longitude:
+ *               type: number
+ *           nullable: true
+ */
 
 /**
  * Enum-like type for user roles in the system.

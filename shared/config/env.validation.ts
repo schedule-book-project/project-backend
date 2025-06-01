@@ -1,11 +1,11 @@
+import dotenv from 'dotenv';
 import Joi from 'joi';
-import { setEnvironment } from './environment.handler';
 
-setEnvironment(); // Ensure the correct env file is loaded before validation
+dotenv.config();
 
 // Define the schema for environment variables
 const envSchema = Joi.object({
-  APP_PORT: Joi.number().default(5000),
+  PORT: Joi.number().default(5000),
   GATEWAY_PORT: Joi.number().required(),
   BUSINESS_PORT: Joi.number().required(),
   BOOKING_PORT: Joi.number().required(),
