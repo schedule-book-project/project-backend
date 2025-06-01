@@ -246,7 +246,8 @@ export const getAdminById = async (
   try {
     const admin = await userService.getUserById(req.params.id);
     if (!admin || !['superadmin', 'moderator'].includes(admin.role)) {
-      return res.status(404).json({ error: 'Admin not found' });
+      res.status(404).json({ error: 'Admin not found' }); // Removed 'return'
+      return; // Ensure function exits if response is sent
     }
     res.json(admin);
   } catch (error: unknown) {

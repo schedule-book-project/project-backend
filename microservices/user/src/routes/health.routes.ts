@@ -1,6 +1,11 @@
-import express, { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express'; // Changed to type-only imports
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Replicate __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
@@ -14,7 +19,9 @@ try {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   version = packageJson.version || 'unknown';
 } catch (error) {
-  console.error('Failed to read user-service package.json version:', error);
+  // Log using a proper logger if available and if this code runs in a context where logger is easily accessible
+  // For now, keeping console.error as this is initialization code.
+  console.error('Failed to read user-service package.json version:', error instanceof Error ? error.message : String(error));
 }
 
 router.get('/health', (_req: Request, res: Response) => {

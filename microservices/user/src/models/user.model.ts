@@ -64,15 +64,14 @@ UserSchema.pre('save', async function (next) {
     }
     this.password = await bcrypt.hash(this.password, 10);
     next();
-  } catch (error: Error) {
-    // Changed to Error type
+  } catch (error: unknown) { // Changed to unknown
     // Assuming logger is not available or easily injectable into model files directly.
     // If it were, logger.error('Pre-save hook error hashing password:', { errorDetail: error });
-    // For now, keeping console.error as it's a model file, or use a more generic error.
-    // Or rethrow a more specific error type if needed by application logic.
-    // The primary fix here is the 'any' type.
-    console.error('Pre-save hook error hashing password:', error); // Kept console.error for now, or could be next(error) only
-    next(error);
+    // For now, keeping console.error as it's a model file.
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error in pre-save hook';
+    console.error('Pre-save hook error hashing password:', errorMessage, error); // Log message and original error
+    // Ensure an Error object is passed to next()
+    next(error instanceof Error ? error : new Error(errorMessage));
   }
 });
 

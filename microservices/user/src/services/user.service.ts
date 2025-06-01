@@ -35,18 +35,19 @@ export const loginUser = async (
   token: string;
   user: { id: Types.ObjectId; email: string; role: string };
 }> => {
-  const user = await User.findOne({ email: email.toLowerCase() })
-    .select('_id email password role') // Added role to select
-    .lean();
-  if (!user) {
-    throw new Error('Invalid credentials');
+  const user = (await User.findOne({ email: email.toLowerCase() })
+    .select('_id email password role')
+    .lean()) as { _id: Types.ObjectId; email: string; password?: string; role: string } | null;
+
+  if (!user || !user.password) { // Added check for user.password as it's used by bcrypt.compare
+    throw new Error('Invalid credentials or user data incomplete');
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error('Invalid credentials');
   }
-
+  // Now user is guaranteed to have _id and role of the correct types for generateToken
   const token = generateToken(user);
   return { token, user: { id: user._id, email: user.email, role: user.role } };
 };
@@ -141,7 +142,8 @@ export const deleteUser = async (id: string): Promise<{ message: string }> => {
 export const getUsersByRole = async (
   role: string,
 ): Promise<Pick<IUser, '_id' | 'email' | 'role'>[]> => {
-  return User.find({ role }).select('_id email role').lean() as Pick<
+  // Added await here
+  return (await User.find({ role }).select('_id email role').lean()) as Pick<
     IUser,
     '_id' | 'email' | 'role'
   >[];
