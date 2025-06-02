@@ -14,15 +14,15 @@ app.use(cors());
 app.use(express.json());
 
 // Swagger setup
-setupSwagger(app, 'Business Service');
+// setupSwagger(app, 'Business Service');
 
 // Routes
 app.use('/api/business', businessRoutes);
-app.use('/', healthRoutes);
+app.use('/health', healthRoutes);
 app.use('/', docsRoutes); // Register docs routes at the root
 
 const PORT = config.BUSINESS_PORT ?? 5003;
-dbConnection(config.BUSINESS_MONGO_DB_URI, 'Business')
+dbConnection(config.BUSINESS_MONGO_DB_URI!, 'Business')
   .then(() => {
     logger.info(`MongoDB connected to ${config.BUSINESS_MONGO_DB_URI}`);
     app.listen(PORT, () =>

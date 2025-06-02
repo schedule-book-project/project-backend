@@ -1,7 +1,7 @@
-import dotenv from 'dotenv';
 import Joi from 'joi';
+import { setEnvironment } from './environment.handler';
 
-dotenv.config();
+setEnvironment();
 
 // Define the schema for environment variables
 const envSchema = Joi.object({

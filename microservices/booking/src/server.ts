@@ -15,13 +15,13 @@ app.use(express.json());
 
 // Routes
 app.use('/api/bookings', bookingRoutes);
-app.use('/', healthRoutes);
+app.use('/health', healthRoutes);
 app.use('/', docsRoutes); // Register docs routes at the root
 
-setupSwagger(app, 'Booking Service');
+// setupSwagger(app, 'Booking Service');
 
 const PORT = config.BOOKING_PORT ?? 5004;
-dbConnection(config.BOOKING_MONGO_DB_URI, 'Booking')
+dbConnection(config.BOOKING_MONGO_DB_URI!, 'Booking')
   .then(() => {
     logger.info(`MongoDB connected to ${config.BOOKING_MONGO_DB_URI}`);
     app.listen(PORT, () =>
