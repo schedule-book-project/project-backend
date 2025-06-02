@@ -5,7 +5,7 @@ import healthRoutes from './routes/health.routes';
 import docsRoutes from './routes/docs.routes'; // Import docs routes
 import dbConnection from '@shared/database/db.ts';
 import { config } from '@shared/config/environment.handler.ts';
-import { setupSwagger } from '@shared/swagger/config'; // Corrected import name
+// import { setupSwagger } from '@shared/swagger/config'; // Removed
 import logger from '../../../shared/logger/logger';
 
 const app = express();
@@ -15,13 +15,13 @@ app.use(express.json());
 
 // Routes
 app.use('/api/bookings', bookingRoutes);
-app.use('/health', healthRoutes);
+app.use('/', healthRoutes);
 app.use('/', docsRoutes); // Register docs routes at the root
 
-// setupSwagger(app, 'Booking Service');
+// setupSwagger(app, 'Booking Service'); // Removed
 
 const PORT = config.BOOKING_PORT ?? 5004;
-dbConnection(config.BOOKING_MONGO_DB_URI!, 'Booking')
+dbConnection(config.BOOKING_MONGO_DB_URI, 'Booking')
   .then(() => {
     logger.info(`MongoDB connected to ${config.BOOKING_MONGO_DB_URI}`);
     app.listen(PORT, () =>

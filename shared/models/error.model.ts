@@ -64,7 +64,9 @@ export interface ApiError {
  *               example: 403
  *             message:
  *               example: 'Permission denied'
- *
+ */
+
+/**
  * Class representing an error model for handling and formatting errors in a REST API.
  * This class provides a standardized way to create and return error responses.
  *
