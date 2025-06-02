@@ -4,7 +4,7 @@ import bookingRoutes from './routes/booking.routes';
 import healthRoutes from './routes/health.routes';
 import docsRoutes from './routes/docs.routes'; // Import docs routes
 import dbConnection from '@shared/database/db.ts';
-import { config } from '@shared/config/environment.handler.ts';
+import config from '@shared/config/env.validation'; // Changed import
 // import { setupSwagger } from '@shared/swagger/config'; // Removed
 import logger from '../../../shared/logger/logger';
 

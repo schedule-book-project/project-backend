@@ -6,10 +6,11 @@ import gatewayRoutes from './routes/gateway.routes';
 import swaggerRoutes from './routes/swagger.routes'; // Import Swagger UI routes
 import envVars from '../../../shared/config/env.validation';
 import logger from '../../../shared/logger/logger';
+// dotenv.config() is handled by environment.handler.ts, imported via env.validation.ts
 import fs from 'fs';
 import path from 'path';
 
-dotenv.config();
+// dotenv.config(); // Removed, handled by shared/config/environment.handler.ts
 const app = express();
 
 app.use(cors());
