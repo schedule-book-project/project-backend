@@ -5,8 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "start:bun": "bun run src/server.ts",
-    "start": "tsx src/server.ts",
-    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
+    "start": "tsx src/server.ts"
   },
   "dependencies": {
     "express": "latest",
@@ -18,11 +17,6 @@
   },
   "devDependencies": {
     "nodemon": "latest",
-    "typescript": "latest",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.12",
-    "ts-jest": "^29.2.3",
-    "supertest": "^6.3.4",
-    "@types/supertest": "^6.0.2"
+    "typescript": "latest"
   }
 }

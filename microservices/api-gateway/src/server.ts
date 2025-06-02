@@ -40,9 +40,7 @@ app.get('/health', (_req, res) => {
 
 const PORT = envVars.PORT;
 
-// Start server only if not in test environment or if run directly
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => logger.info(`🚀 API Gateway running on port ${PORT}`));
-}
+// Always start server
+app.listen(PORT, () => logger.info(`🚀 API Gateway running on port ${PORT}`));
 
 export default app; // Export app for testing
